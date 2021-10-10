@@ -19,7 +19,8 @@ class HomeActivity : AppCompatActivity() {
             "이창환",
             26,
             "외워야겠다...",
-            "현재시각 새벽 2시에 푸라닭을 결국 먹고있는 저는 돼지입니다 제발 살은 안쪘으면 좋겠네요"
+            "현재시각 새벽 2시에 푸라닭을 결국 먹고있는 저는 돼지입니다 제발 살은 안쪘으면 좋겠네요",
+            R.drawable.pig
         )
 
         binding.introduce = introduce
