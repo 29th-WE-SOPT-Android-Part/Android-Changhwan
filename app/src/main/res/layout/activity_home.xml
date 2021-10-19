@@ -62,7 +62,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@{`이름 : ` + introduce.name}"
+                    android:text="@{`이름 : ` + introduce.liveName}"
                     android:textSize="25dp"
                     android:textStyle="bold"
                     tools:text="이름" />
@@ -73,10 +73,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:gravity="center"
-                    android:text="@{`나이 : ` + introduce.age}"
+                    android:text="@{`나이 : ` + introduce.liveAge}"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    tools:text="나이"/>
+                    tools:text="나이" />
 
                 <TextView
                     android:id="@+id/homeMbti"
@@ -84,10 +84,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:gravity="center"
-                    android:text="@{`MBTI : ` + introduce.mbti}"
+                    android:text="@{`MBTI : ` + introduce.liveMbti}"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    tools:text="mbti"/>
+                    tools:text="mbti" />
 
                 <TextView
                     android:id="@+id/homeIntro"
@@ -95,10 +95,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
                     android:gravity="center"
-                    android:text="@{`자기소개 : ` + introduce.introduction}"
+                    android:text="@{`자기소개 : ` + introduce.liveIntroduction}"
                     android:textSize="25dp"
                     android:textStyle="bold"
-                    tools:text="자기소개"/>
+                    tools:text="자기소개" />
 
                 <Button
                     android:id="@+id/homeToGit"
@@ -107,6 +107,7 @@
                     android:layout_gravity="center"
                     android:layout_marginTop="30dp"
                     android:background="@drawable/gitlogo" />
+
 
             </LinearLayout>
         </ScrollView>
