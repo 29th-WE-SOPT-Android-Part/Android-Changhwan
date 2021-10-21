@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import changhwan.experiment.sopthomework.databinding.ActivityHomeBinding
@@ -31,6 +32,27 @@ class HomeActivity : AppCompatActivity() {
         binding.homeToGit.setOnClickListener {
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/2chang5"))
             startActivity(intent)
+        }
+
+        siteFragment()
+
+    }
+
+    private fun siteFragment(){
+        val followerFragment = FollowerFragment()
+        val repositoryFragment = RepositoryFragment()
+
+
+        supportFragmentManager.beginTransaction().add(R.id.fragmentFrame,followerFragment).commit()
+
+        binding.followerButton.setOnClickListener {
+            supportFragmentManager.beginTransaction().replace(R.id.fragmentFrame,followerFragment).commit()
+
+        }
+
+        binding.repoButton.setOnClickListener {
+            supportFragmentManager.beginTransaction().replace(R.id.fragmentFrame,repositoryFragment).commit()
+
         }
 
     }
