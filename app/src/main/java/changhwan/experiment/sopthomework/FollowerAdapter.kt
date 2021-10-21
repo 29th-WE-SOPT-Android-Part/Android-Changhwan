@@ -1,7 +1,10 @@
 package changhwan.experiment.sopthomework
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import changhwan.experiment.sopthomework.databinding.FollowerItemBinding
 
@@ -10,7 +13,8 @@ class FollowerAdapter : RecyclerView.Adapter<FollowerAdapter.FollowerViewHolder>
     val followerData = mutableListOf<FollowerData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowerViewHolder {
-        val binding = FollowerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            FollowerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return FollowerViewHolder(binding)
     }
 
@@ -25,6 +29,16 @@ class FollowerAdapter : RecyclerView.Adapter<FollowerAdapter.FollowerViewHolder>
         fun onBind(data: FollowerData) {
             binding.followerName.text = data.followerName
             binding.followerIntro.text = data.followerIntro
+        }
+
+        init {
+            binding.root.setOnClickListener {
+                val intent = Intent(binding.root?.context, DetailActivity::class.java).apply {
+                    this.putExtra("name", followerData[adapterPosition].followerName)
+                    this.putExtra("src", R.drawable.pig)
+                }
+                startActivity(binding.root.context, intent,null)
+            }
         }
 
     }
