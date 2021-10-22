@@ -6,14 +6,17 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import changhwan.experiment.sopthomework.databinding.FragmentFollowerBinding
 
 
-class FollowerFragment : Fragment() {
+class FollowerFragment : Fragment(), ItemDragListener {
 
     private var _binding: FragmentFollowerBinding? = null
     private val binding get() = _binding!!
     private lateinit var followerAdapter: FollowerAdapter
+    private lateinit var itemTouchHelper : ItemTouchHelper
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -30,10 +33,13 @@ class FollowerFragment : Fragment() {
 
         binding.followerRecycle.addItemDecoration(CustomMarginDecoration(50))
         binding.followerRecycle.addItemDecoration(CustomDividerDecoration(10f,10f, resources.getColor(R.color.main),40))
+
+        itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(followerAdapter))
+        itemTouchHelper.attachToRecyclerView(binding.followerRecycle)
     }
 
     fun siteFollowerRecycler(){
-        followerAdapter = FollowerAdapter()
+        followerAdapter = FollowerAdapter(this)
 
         binding.followerRecycle.adapter = followerAdapter
 
@@ -51,6 +57,9 @@ class FollowerFragment : Fragment() {
         followerAdapter.notifyDataSetChanged()
     }
 
+    override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
