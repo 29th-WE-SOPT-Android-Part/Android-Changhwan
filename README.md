@@ -223,7 +223,7 @@ finish()로 a로 넘어가면된다.
 
 # - 실행화면
 
-<video src="C:\Users\chang\Documents\Bandicam\bandicam 2021-10-22 17-29-56-316.mp4"></video>
+https://user-images.githubusercontent.com/54737136/138426985-5a53bdb3-e970-45cc-be52-f525bf2128db.mp4
 
 
 
@@ -243,6 +243,7 @@ level1은 당연히 수행했고
 
 
 
+
 level 2-1은
 
 들어갈때 상세화면을 구성하는것은 DetailFragment를 만들어 거기에 데이터를 arguments로 전달해서 구성했고
@@ -250,6 +251,7 @@ level 2-1은
 밑에 설명은 이름이 뭔가에 따라서 그냥 databinding으로 지가알아서 바뀌게 만들었다.
 
 보기좋으라고 필요한부분만 코드를 잘라서 넣어놨는데 잘한건지는 모르겠다 피드백 부탁드립니다.
+
 
 
 
@@ -1296,6 +1298,24 @@ notifyDataSetChanged를 무지성으로 쓰면 모든경우에 다 적용이야 
 이블로그에 있는거 그대로 구현해봤는데 뭔가 틀린부분이 분명있을거같다 급하게해서 돌아는가는데
 
 어쨋든 추후에 다른자료들과 비교해보면서 체크해봐야겠다
+
+
+출처:
+
+https://kumgo1d.tistory.com/44
+
+[https://velog.io/@jinny_0422/Android-Fragment-Activity%EA%B0%84-%EB%8D%B0%EC%9D%B4%ED%84%B0%EC%A0%84%EB%8B%AC](https://velog.io/@jinny_0422/Android-Fragment-Activity간-데이터전달)
+
+https://dudmy.net/android/2018/05/02/drag-and-swipe-recyclerview/
+
+https://seunghyun.in/android/1/
+
+https://youngest-programming.tistory.com/285
+
+https://todaycode.tistory.com/55
+
+[https://velog.io/@deepblue/RecyclerView%EC%9D%98-notifyDataSetChanged](https://velog.io/@deepblue/RecyclerView의-notifyDataSetChanged)
+
 
 
 
