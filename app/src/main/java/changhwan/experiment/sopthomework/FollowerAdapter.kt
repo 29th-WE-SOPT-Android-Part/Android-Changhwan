@@ -1,5 +1,6 @@
 package changhwan.experiment.sopthomework
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.view.KeyEvent.ACTION_DOWN
 import android.view.LayoutInflater
@@ -45,11 +46,11 @@ class FollowerAdapter(private val listener: ItemDragListener) :
     }
 
 
+    @SuppressLint("ClickableViewAccessibility")
     inner class FollowerViewHolder(
         private val binding: FollowerItemBinding,
         listener: ItemDragListener
-    ) :
-        RecyclerView.ViewHolder(binding.root) {
+    ) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(data: FollowerData) {
             binding.followerName.text = data.followerName
             binding.followerIntro.text = data.followerIntro
