@@ -54,7 +54,9 @@ class FollowerFragment : Fragment(), ItemDragListener {
             )
         )
 
-        followerAdapter.notifyDataSetChanged()
+        //diffUtill부분 원래는 followerAdapter.notifyDataSetChanged()였음
+        followerAdapter.setContact(followerAdapter.followerData)
+        //여기까지
     }
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {

@@ -9,6 +9,7 @@ import android.view.MotionEvent.ACTION_DOWN
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import changhwan.experiment.sopthomework.databinding.FollowerItemBinding
 import kotlinx.coroutines.processNextEventInCurrentThread
@@ -16,7 +17,7 @@ import kotlinx.coroutines.processNextEventInCurrentThread
 class FollowerAdapter(private val listener: ItemDragListener) :
     RecyclerView.Adapter<FollowerAdapter.FollowerViewHolder>(), ItemActionListener {
 
-    val followerData = mutableListOf<FollowerData>()
+    var followerData = mutableListOf<FollowerData>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowerViewHolder {
         val binding =
@@ -29,6 +30,14 @@ class FollowerAdapter(private val listener: ItemDragListener) :
     }
 
     override fun getItemCount(): Int = followerData.size
+
+    //diffUtill 부분 이상하면 나중에 바꿔야함
+    fun setContact(contacts: List<FollowerData>){
+        val diffResult= DiffUtil.calculateDiff(ContactDiffUtil(this.followerData, followerData), false)
+        diffResult.dispatchUpdatesTo(this)
+        this.followerData=followerData
+    }
+    //여기까지 diffUtill
 
     override fun onItemMoved(from: Int, to: Int) {
         if (from == to) {
