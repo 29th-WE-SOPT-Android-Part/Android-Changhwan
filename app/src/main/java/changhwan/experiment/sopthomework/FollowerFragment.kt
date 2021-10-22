@@ -1,5 +1,6 @@
 package changhwan.experiment.sopthomework
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -26,6 +27,9 @@ class FollowerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         siteFollowerRecycler()
+
+        binding.followerRecycle.addItemDecoration(CustomMarginDecoration(50))
+        binding.followerRecycle.addItemDecoration(CustomDividerDecoration(10f,10f, resources.getColor(R.color.main),40))
     }
 
     fun siteFollowerRecycler(){

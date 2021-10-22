@@ -25,6 +25,8 @@ class RepositoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         siteRepositoryRecycler()
+
+        binding.repositoryRecycle.addItemDecoration(CustomMarginDecoration(50))
     }
 
 
