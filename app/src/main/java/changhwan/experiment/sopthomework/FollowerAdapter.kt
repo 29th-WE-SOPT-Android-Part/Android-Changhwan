@@ -66,7 +66,7 @@ class FollowerAdapter(private val listener: ItemDragListener) :
             binding.followerName.text = data.followerName
             binding.followerIntro.text = data.followerIntro
             Glide.with(binding.root)
-                .load(R.drawable.pig)
+                .load(data.followerImg)
                 .circleCrop()
                 .into(binding.imageView)
         }
