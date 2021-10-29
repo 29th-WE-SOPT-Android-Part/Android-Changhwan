@@ -31,8 +31,8 @@ class FollowerFragment : Fragment(), ItemDragListener {
         super.onViewCreated(view, savedInstanceState)
         siteFollowerRecycler()
 
-        binding.followerRecycle.addItemDecoration(CustomMarginDecoration(50))
-        binding.followerRecycle.addItemDecoration(CustomDividerDecoration(10f,10f, resources.getColor(R.color.main),40))
+        binding.followerRecycle.addItemDecoration(CustomMarginDecoration(24))
+        binding.followerRecycle.addItemDecoration(CustomDividerDecoration(1f,10f, resources.getColor(R.color.divider),40))
 
         itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(followerAdapter))
         itemTouchHelper.attachToRecyclerView(binding.followerRecycle)

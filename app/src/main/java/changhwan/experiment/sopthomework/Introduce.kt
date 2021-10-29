@@ -5,8 +5,7 @@ import androidx.lifecycle.MutableLiveData
 
 data class Introduce(
     var liveName: MutableLiveData<String>,
-    var LiveAge: MutableLiveData<Int>,
-    val liveMbti: MutableLiveData<String>,
     val liveIntroduction: MutableLiveData<String>,
+    val liveID : MutableLiveData<String>,
     val resorce: Int,
 )

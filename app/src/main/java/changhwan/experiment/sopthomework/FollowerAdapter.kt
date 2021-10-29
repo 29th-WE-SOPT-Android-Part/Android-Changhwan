@@ -39,6 +39,7 @@ class FollowerAdapter(private val listener: ItemDragListener) :
     }
     //여기까지 diffUtill
 
+    //아이템 드래그 드롭
     override fun onItemMoved(from: Int, to: Int) {
         if (from == to) {
             return

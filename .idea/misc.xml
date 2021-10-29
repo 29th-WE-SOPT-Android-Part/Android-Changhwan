@@ -5,21 +5,34 @@
       <map>
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable-v24/button_border_white.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.21354166666666666" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/button_border_grey.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/button_border_orange.xml" value="0.3764102564102564" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/button_border_pink.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/button_border_white.xml" value="0.3314814814814815" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/button_select_color.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/ic_home.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/input_border.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/text_input_color.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/text_input_focus.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/drawable/text_input_none_focus.xml" value="0.38229166666666664" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/font/noto_sans_kr.xml" value="0.3963541666666667" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_detail.xml" value="0.36614583333333334" />
-        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_home.xml" value="0.30606860158311344" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_main.xml" value="0.3515625" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_sign_in.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_sign_up.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/follower_item.xml" value="0.3134057971014493" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_detail.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_follower.xml" value="0.33469202898550726" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_home.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_home_follower.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_home_following.xml" value="0.3515625" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_profile.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_profile_detail.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_repository.xml" value="0.3292572463768116" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/repo_item.xml" value="0.3134057971014493" />
-        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/repository_item.xml" value="0.17806484295845998" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/repository_item.xml" value="0.33" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/menu/bottom_menu.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.21354166666666666" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.21354166666666666" />
       </map>

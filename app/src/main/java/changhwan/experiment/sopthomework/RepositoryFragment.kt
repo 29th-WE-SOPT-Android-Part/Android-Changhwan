@@ -26,12 +26,15 @@ class RepositoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         siteRepositoryRecycler()
 
-        binding.repositoryRecycle.addItemDecoration(CustomMarginDecoration(50))
+
     }
 
 
     fun siteRepositoryRecycler(){
         repositoryAdapter = RepositoryAdapter()
+
+        binding.repositoryRecycle.addItemDecoration(CustomDividerDecoration(1f,10f, resources.getColor(R.color.divider),40))
+        binding.repositoryRecycle.addItemDecoration(CustomMarginDecoration(24))
 
         binding.repositoryRecycle.adapter = repositoryAdapter
 

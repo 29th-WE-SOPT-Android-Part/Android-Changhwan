@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="profileDetail"
+            type="changhwan.experiment.sopthomework.Introduce" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FA79B0"
+        tools:context=".ProfileDetailFragment">
+
+        <ImageView
+            android:id="@+id/profile_detail_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="22dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/profile_detail_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="@{profileDetail.liveName}"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="700"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_detail_img"
+            tools:text="이름 대문짝 만하게" />
+
+        <TextView
+            android:id="@+id/profile_detail_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="@{profileDetail.liveID}"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_detail_name"
+            tools:text="아이디" />
+
+        <TextView
+            android:id="@+id/profile_detail_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="@{profileDetail.liveIntroduction}"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="500"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_detail_id"
+            tools:text="자기소개" />
+
+        <ImageView
+            android:id="@+id/set_up_Icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginRight="7dp"
+            android:src="@drawable/set_up_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
