@@ -43,7 +43,7 @@ class CameraFragment : Fragment() {
 
 
 
-        binding.lifecycleOwner = this
+        binding.lifecycleOwner = viewLifecycleOwner
 
         initPicUri()
         initIntent()
