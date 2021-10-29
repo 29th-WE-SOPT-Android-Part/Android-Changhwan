@@ -65,7 +65,7 @@ class FollowerAdapter(private val listener: ItemDragListener) :
     ) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(data: FollowerData) {
             binding.profileRecycler = data
-            // binding.executePendingBindings() 이거 뭔지 알아봐야함 좀더 왜 없어도 잘됨? 그리고 lifecycle owner어따넣냐
+            // binding.executePendingBindings() -> 없어도 된단다 이거 바인딩할때 작업들 당장당장 수행하라고 강요하는 함수. 그리고 lifecycle owner어따넣냐 안넣어 망할
         }
 
         init {

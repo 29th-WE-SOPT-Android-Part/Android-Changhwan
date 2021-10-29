@@ -1,6 +1,10 @@
 package changhwan.experiment.sopthomework
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.DatabaseUtils
 import android.net.Uri
 import android.os.Bundle
@@ -11,6 +15,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import changhwan.experiment.sopthomework.databinding.FragmentCameraBinding
@@ -21,6 +27,12 @@ class CameraFragment : Fragment() {
     private var _binding : FragmentCameraBinding? = null
     private val binding get() = _binding!!
     private lateinit var getContent: ActivityResultLauncher<Intent>
+    private lateinit var fContext : Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fContext = context
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,8 +66,16 @@ class CameraFragment : Fragment() {
             type = "image/*"
         }
 
+
+
+
         binding.cameraButton.setOnClickListener{
-            getContent.launch(intent)
+            var permission = ContextCompat.checkSelfPermission(fContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            if(permission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+            } else {
+                getContent.launch(intent)
+            }
         }
     }
 
@@ -63,5 +83,9 @@ class CameraFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object{
+        const val REQUEST_CODE = 1
     }
 }
