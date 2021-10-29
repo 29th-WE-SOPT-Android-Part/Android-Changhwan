@@ -33,10 +33,11 @@ class FollowerAdapter(private val listener: ItemDragListener) :
     override fun getItemCount(): Int = followerData.size
 
     //diffUtill 부분 이상하면 나중에 바꿔야함
-    fun setContact(contacts: List<FollowerData>){
-        val diffResult= DiffUtil.calculateDiff(ContactDiffUtil(this.followerData, followerData), false)
+    fun setContact(contacts: List<FollowerData>) {
+        val diffResult =
+            DiffUtil.calculateDiff(ContactDiffUtil(this.followerData, followerData), false)
         diffResult.dispatchUpdatesTo(this)
-        this.followerData=followerData
+        this.followerData = followerData
     }
     //여기까지 diffUtill
 
@@ -63,18 +64,14 @@ class FollowerAdapter(private val listener: ItemDragListener) :
         listener: ItemDragListener
     ) : RecyclerView.ViewHolder(binding.root) {
         fun onBind(data: FollowerData) {
-            binding.followerName.text = data.followerName
-            binding.followerIntro.text = data.followerIntro
-            Glide.with(binding.root)
-                .load(data.followerImg)
-                .circleCrop()
-                .into(binding.imageView)
+            binding.profileRecycler = data
+            // binding.executePendingBindings() 이거 뭔지 알아봐야함 좀더 왜 없어도 잘됨? 그리고 lifecycle owner어따넣냐
         }
 
         init {
             binding.root.setOnClickListener {
                 val intent = Intent(binding.root?.context, DetailActivity::class.java).apply {
-                    this.putExtra("name", followerData[adapterPosition].followerName)
+                    this.putExtra("name", followerData[adapterPosition].followerName.value)
                     this.putExtra("src", R.drawable.pig)
                 }
                 startActivity(binding.root.context, intent, null)
