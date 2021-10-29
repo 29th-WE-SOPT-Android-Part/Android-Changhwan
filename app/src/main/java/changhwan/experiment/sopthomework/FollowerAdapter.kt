@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import changhwan.experiment.sopthomework.databinding.FollowerItemBinding
+import com.bumptech.glide.Glide
 import kotlinx.coroutines.processNextEventInCurrentThread
 
 class FollowerAdapter(private val listener: ItemDragListener) :
@@ -64,6 +65,10 @@ class FollowerAdapter(private val listener: ItemDragListener) :
         fun onBind(data: FollowerData) {
             binding.followerName.text = data.followerName
             binding.followerIntro.text = data.followerIntro
+            Glide.with(binding.root)
+                .load(R.drawable.pig)
+                .circleCrop()
+                .into(binding.imageView)
         }
 
         init {

@@ -9,7 +9,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import changhwan.experiment.sopthomework.databinding.FragmentProfileBinding
 import changhwan.experiment.sopthomework.databinding.FragmentProfileDetailBinding
-
+import com.bumptech.glide.Glide
 
 
 class ProfileDetailFragment : Fragment() {
@@ -34,18 +34,18 @@ class ProfileDetailFragment : Fragment() {
         binding.profileDetail = introduce
         binding.lifecycleOwner = this
 
-//        initImg()
+        initImg()
 
         return binding.root
     }
 
 
-//    private fun initImg(){
-//        Glide.with(this)
-//            .load(R.drawable.minion)
-//            .circleCrop()
-//            .into(binding.profileDetailImg)
-//    }
+    private fun initImg(){
+        Glide.with(this)
+            .load(R.drawable.minion)
+            .circleCrop()
+            .into(binding.profileDetailImg)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()
