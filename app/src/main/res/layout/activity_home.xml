@@ -17,136 +17,22 @@
         tools:context=".HomeActivity">
 
 
-        <TextView
-            android:id="@+id/homeMaintext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="44dp"
-            android:text="SOPTHub"
-            android:textColor="#e84393"
-            android:textSize="40dp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.497"
-            app:layout_constraintStart_toStartOf="parent"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/vp_home"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/bn_home"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/homeImage"
-            android:layout_width="100dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="20dp"
-            app:imgRes="@{introduce.resorce}"
-            app:layout_constraintDimensionRatio="1:1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/homeMaintext" />
-
-        <ScrollView
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bn_home"
             android:layout_width="match_parent"
-            android:layout_height="450dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="30dp"
-            app:layout_constraintTop_toBottomOf="@+id/homeImage"
-            tools:layout_editor_absoluteX="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/homeName"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@{`이름 : ` + introduce.liveName}"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    tools:text="이름" />
-
-                <TextView
-                    android:id="@+id/homeAge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:gravity="center"
-                    android:text="@{`나이 : ` + introduce.liveAge}"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    tools:text="나이" />
-
-                <TextView
-                    android:id="@+id/homeMbti"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:gravity="center"
-                    android:text="@{`MBTI : ` + introduce.liveMbti}"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    tools:text="mbti" />
-
-                <TextView
-                    android:id="@+id/homeIntro"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
-                    android:gravity="center"
-                    android:text="@{`자기소개 : ` + introduce.liveIntroduction}"
-                    android:textSize="25dp"
-                    android:textStyle="bold"
-                    tools:text="자기소개" />
-
-                <Button
-                    android:id="@+id/homeToGit"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="15dp"
-                    android:background="@drawable/gitlogo"
-                    tools:ignore="SpeakableTextPresentCheck" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/followerButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/button_border_pink"
-                        android:padding="10dp"
-                        android:text="팔로워\n목록"
-                        android:textColor="@color/white"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <Button
-                        android:id="@+id/repoButton"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/button_border_orange"
-                        android:padding="10dp"
-                        android:text="레포지토리\n목록"
-                        android:textColor="@color/white"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <androidx.fragment.app.FragmentContainerView
-                    android:id="@+id/fragmentFrame"
-                    android:layout_width="match_parent"
-                    android:layout_height="200dp"/>
-
-            </LinearLayout>
-        </ScrollView>
+            android:layout_height="56dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:background="#FFFFFF"
+            app:menu="@menu/bottom_menu"
+            app:itemRippleColor="#FA79B0"
+            app:itemTextColor="@color/bn_color"
+            app:itemIconTint="@color/bn_color"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

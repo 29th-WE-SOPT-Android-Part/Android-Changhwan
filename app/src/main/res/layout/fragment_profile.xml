@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        tools:context=".ProfileFragment">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/profile_fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="182dp"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <RadioGroup
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintTop_toBottomOf="@+id/profile_fragment_container">
+
+            <RadioButton
+                android:id="@+id/followerButton"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginLeft="11dp"
+                android:layout_marginTop="11dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="11dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_select_color"
+                android:button="@null"
+                android:fontFamily="@font/noto_sans_kr"
+                android:includeFontPadding="false"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:text="팔로워 목록"
+                android:textAlignment="center"
+                android:textColor="@color/button_text_color"
+                android:textFontWeight="400"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/repoButton"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_marginTop="11dp"
+                android:layout_marginRight="13dp"
+                android:layout_marginBottom="11dp"
+                android:layout_weight="1"
+                android:background="@drawable/button_select_color"
+                android:button="@null"
+                android:fontFamily="@font/noto_sans_kr"
+                android:includeFontPadding="false"
+                android:padding="10dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:text="레포지토리 목록"
+                android:textAlignment="center"
+                android:textColor="@color/button_text_color"
+                android:textFontWeight="400"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentFrame"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

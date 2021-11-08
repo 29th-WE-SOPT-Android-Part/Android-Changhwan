@@ -1320,3 +1320,1375 @@ https://todaycode.tistory.com/55
 
 
 </details>
+
+<details markdown="1">
+<summary>3주차</summary>
+# -실행화면
+
+
+
+https://user-images.githubusercontent.com/54737136/139484281-73079e46-c2de-47fb-91ce-a0d315c5cf1b.mp4
+
+
+
+# -코드설명
+
+level1다했고
+
+level2,3 다했다.
+
+
+
+## level2
+
+2-1
+
+NestedScrollableHost.kt
+
+```
+package changhwan.experiment.sopthomework
+
+/*
+ * Copyright 2019 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+import android.content.Context
+import android.util.AttributeSet
+import android.view.MotionEvent
+import android.view.View
+import android.view.ViewConfiguration
+import android.widget.FrameLayout
+import androidx.viewpager2.widget.ViewPager2
+import androidx.viewpager2.widget.ViewPager2.ORIENTATION_HORIZONTAL
+import kotlin.math.absoluteValue
+import kotlin.math.sign
+
+/**
+ * Layout to wrap a scrollable component inside a ViewPager2. Provided as a solution to the problem
+ * where pages of ViewPager2 have nested scrollable elements that scroll in the same direction as
+ * ViewPager2. The scrollable element needs to be the immediate and only child of this host layout.
+ *
+ * This solution has limitations when using multiple levels of nested scrollable elements
+ * (e.g. a horizontal RecyclerView in a vertical RecyclerView in a horizontal ViewPager2).
+ */
+class NestedScrollableHost : FrameLayout {
+    constructor(context: Context) : super(context)
+    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs)
+
+    private var touchSlop = 0
+    private var initialX = 0f
+    private var initialY = 0f
+    private val parentViewPager: ViewPager2?
+        get() {
+            var v: View? = parent as? View
+            while (v != null && v !is ViewPager2) {
+                v = v.parent as? View
+            }
+            return v as? ViewPager2
+        }
+
+    private val child: View? get() = if (childCount > 0) getChildAt(0) else null
+
+    init {
+        touchSlop = ViewConfiguration.get(context).scaledTouchSlop
+    }
+
+    private fun canChildScroll(orientation: Int, delta: Float): Boolean {
+        val direction = -delta.sign.toInt()
+        return when (orientation) {
+            0 -> child?.canScrollHorizontally(direction) ?: false
+            1 -> child?.canScrollVertically(direction) ?: false
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+    override fun onInterceptTouchEvent(e: MotionEvent): Boolean {
+        handleInterceptTouchEvent(e)
+        return super.onInterceptTouchEvent(e)
+    }
+
+    private fun handleInterceptTouchEvent(e: MotionEvent) {
+        val orientation = parentViewPager?.orientation ?: return
+
+        // Early return if child can't scroll in same direction as parent
+        if (!canChildScroll(orientation, -1f) && !canChildScroll(orientation, 1f)) {
+            return
+        }
+
+        if (e.action == MotionEvent.ACTION_DOWN) {
+            initialX = e.x
+            initialY = e.y
+            parent.requestDisallowInterceptTouchEvent(true)
+        } else if (e.action == MotionEvent.ACTION_MOVE) {
+            val dx = e.x - initialX
+            val dy = e.y - initialY
+            val isVpHorizontal = orientation == ORIENTATION_HORIZONTAL
+
+            // assuming ViewPager2 touch-slop is 2x touch-slop of child
+            val scaledDx = dx.absoluteValue * if (isVpHorizontal) .5f else 1f
+            val scaledDy = dy.absoluteValue * if (isVpHorizontal) 1f else .5f
+
+            if (scaledDx > touchSlop || scaledDy > touchSlop) {
+                if (isVpHorizontal == (scaledDy > scaledDx)) {
+                    // Gesture is perpendicular, allow all parents to intercept
+                    parent.requestDisallowInterceptTouchEvent(false)
+                } else {
+                    // Gesture is parallel, query child if movement in that direction is possible
+                    if (canChildScroll(orientation, if (isVpHorizontal) dx else dy)) {
+                        // Child can scroll, disallow all parents to intercept
+                        parent.requestDisallowInterceptTouchEvent(true)
+                    } else {
+                        // Child cannot scroll, allow all parents to intercept
+                        parent.requestDisallowInterceptTouchEvent(false)
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+구글에서 복붙했다
+
+```
+<changhwan.experiment.sopthomework.NestedScrollableHost
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/tl_fragment_home">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/vp_fragment_home"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</changhwan.experiment.sopthomework.NestedScrollableHost>
+```
+
+그후 NestedScrollableHost로 감싸줬다 내부에있는 viewpager2에
+
+
+
+level2-2
+
+처음에 그냥 data에 이렇게 uri추가해서 viewhilder로 Glide로 넣었었는데 databinding하면서 bindingadapter 로 해결했다
+
+![image](https://user-images.githubusercontent.com/54737136/139485083-f5041625-c2f7-4def-93c6-29c7c1dabc24.png)
+
+
+
+BindingAdapters.kt
+
+```
+package changhwan.experiment.sopthomework
+
+
+import android.graphics.drawable.Drawable
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
+
+
+object BindingAdapters {
+
+    @JvmStatic
+    @BindingAdapter("recyclerGlide")
+    fun setImage (imageview : ImageView, url : MutableLiveData<String>){
+        Glide.with(imageview.context)
+            .load(url.value)
+            .circleCrop()
+            .into(imageview)
+    }
+}
+```
+
+
+
+follower_item.xml
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="profileRecycler"
+            type="changhwan.experiment.sopthomework.FollowerData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/followerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="49dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:recyclerGlide="@{profileRecycler.followerImg}" />
+
+        <TextView
+            android:id="@+id/followerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="@{profileRecycler.followerName}"
+            android:textFontWeight="700"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="이름" />
+
+        <TextView
+            android:id="@+id/followerIntro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="24sp"
+            android:ellipsize="end"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@{profileRecycler.followerIntro}"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/followerName"
+            app:layout_constraintTop_toBottomOf="@+id/followerName"
+            tools:text="자기소개" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+```
+
+
+
+## level3
+
+3-1
+
+설명은 과제에서 배운거에서 다했습니다.
+
+follower_Item.xml
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="profileRecycler"
+            type="changhwan.experiment.sopthomework.FollowerData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/followerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="49dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:recyclerGlide="@{profileRecycler.followerImg}" />
+
+        <TextView
+            android:id="@+id/followerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="@{profileRecycler.followerName}"
+            android:textFontWeight="700"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="이름" />
+
+        <TextView
+            android:id="@+id/followerIntro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="24sp"
+            android:ellipsize="end"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@{profileRecycler.followerIntro}"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/followerName"
+            app:layout_constraintTop_toBottomOf="@+id/followerName"
+            tools:text="자기소개" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+```
+
+
+
+
+
+FollowerAdapter.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.annotation.SuppressLint
+import android.content.Intent
+import android.view.KeyEvent.ACTION_DOWN
+import android.view.LayoutInflater
+import android.view.MotionEvent
+import android.view.MotionEvent.ACTION_DOWN
+import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import changhwan.experiment.sopthomework.databinding.FollowerItemBinding
+import com.bumptech.glide.Glide
+import kotlinx.coroutines.processNextEventInCurrentThread
+
+class FollowerAdapter(private val listener: ItemDragListener) :
+    RecyclerView.Adapter<FollowerAdapter.FollowerViewHolder>(), ItemActionListener {
+
+    var followerData = mutableListOf<FollowerData>()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowerViewHolder {
+        val binding =
+            FollowerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FollowerViewHolder(binding, listener)
+    }
+
+    override fun onBindViewHolder(holder: FollowerViewHolder, position: Int) {
+        holder.onBind(followerData[position])
+    }
+
+    override fun getItemCount(): Int = followerData.size
+
+    //diffUtill 부분 이상하면 나중에 바꿔야함
+    fun setContact(contacts: List<FollowerData>) {
+        val diffResult =
+            DiffUtil.calculateDiff(ContactDiffUtil(this.followerData, followerData), false)
+        diffResult.dispatchUpdatesTo(this)
+        this.followerData = followerData
+    }
+    //여기까지 diffUtill
+
+    //아이템 드래그 드롭
+    override fun onItemMoved(from: Int, to: Int) {
+        if (from == to) {
+            return
+        }
+
+        val fromItem = followerData.removeAt(from)
+        followerData.add(to, fromItem)
+        notifyItemMoved(from, to)
+    }
+
+    override fun onItemSwiped(position: Int) {
+        followerData.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+
+    @SuppressLint("ClickableViewAccessibility")
+    inner class FollowerViewHolder(
+        private val binding: FollowerItemBinding,
+        listener: ItemDragListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun onBind(data: FollowerData) {
+            binding.profileRecycler = data
+            // binding.executePendingBindings() -> 없어도 된단다 이거 바인딩할때 작업들 당장당장 수행하라고 강요하는 함수. 그리고 lifecycle owner어따넣냐 안넣어 망할
+        }
+
+        init {
+            binding.root.setOnClickListener {
+                val intent = Intent(binding.root?.context, DetailActivity::class.java).apply {
+                    this.putExtra("name", followerData[adapterPosition].followerName.value)
+                    this.putExtra("src", R.drawable.pig)
+                }
+                startActivity(binding.root.context, intent, null)
+            }
+
+            binding.root.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    listener.onStartDrag(this)
+                }
+                false
+            }
+        }
+
+    }
+}
+```
+
+
+
+bindingadapter.kt
+
+
+
+```
+package changhwan.experiment.sopthomework
+
+
+import android.graphics.drawable.Drawable
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
+
+
+object BindingAdapters {
+
+    @JvmStatic
+    @BindingAdapter("recyclerGlide")
+    fun setImage (imageview : ImageView, url : MutableLiveData<String>){
+        Glide.with(imageview.context)
+            .load(url.value)
+            .circleCrop()
+            .into(imageview)
+    }
+}
+```
+
+
+
+
+
+3-2
+
+이것도 설명은 이번과제에서 배운것에 다했습니다.
+
+사진은 데이터바인딩으로 넣었다 glide안쓰고 그냥 uri변수에 담고 변수바로 이미지뷰에 연결했다
+
+
+
+fragment _camera.xml
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="camera"
+            type="changhwan.experiment.sopthomework.CameraData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".CameraFragment">
+
+        <ImageView
+            android:id="@+id/camera_img"
+            android:layout_width="160dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="90dp"
+            android:src="@{camera.picUri}"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@tools:sample/avatars" />
+
+        <TextView
+            android:id="@+id/camera_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="사진을 첨부해주세요"
+            android:textColor="#333333"
+            android:textFontWeight="700"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="@+id/camera_img"
+            app:layout_constraintStart_toStartOf="@+id/camera_img"
+            app:layout_constraintTop_toBottomOf="@+id/camera_img" />
+
+        <Button
+            android:id="@+id/camera_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/button_border_pink"
+            android:text="첨부하기"
+            android:textColor="#FFFFFF"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/camera_text" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+```
+
+
+
+
+
+CameraFragment.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.database.DatabaseUtils
+import android.net.Uri
+import android.os.Bundle
+import android.provider.MediaStore
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import changhwan.experiment.sopthomework.databinding.FragmentCameraBinding
+
+
+class CameraFragment : Fragment() {
+
+    private var _binding : FragmentCameraBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var getContent: ActivityResultLauncher<Intent>
+    private lateinit var fContext : Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fContext = context
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = DataBindingUtil.inflate(inflater,R.layout.fragment_camera, container, false)
+
+
+
+
+        binding.lifecycleOwner = viewLifecycleOwner
+
+        initPicUri()
+        initIntent()
+
+        return binding.root
+    }
+
+    private fun initPicUri(){
+
+
+        getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val cameraData = CameraData(picUri = MutableLiveData<Uri>().apply { value = it.data?.data })
+            binding.camera = cameraData
+        }
+    }
+
+    private fun initIntent(){
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = MediaStore.Images.Media.CONTENT_TYPE
+            type = "image/*"
+        }
+
+
+
+
+        binding.cameraButton.setOnClickListener{
+            var permission = ContextCompat.checkSelfPermission(fContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            if(permission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+            } else {
+                getContent.launch(intent)
+            }
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object{
+        const val REQUEST_CODE = 1
+    }
+}
+```
+
+
+
+
+
+
+
+
+
+# -이번과제를 통해 배운내용
+
+## **라디오 버튼 커스텀**
+
+selector의 state_checked 속성을 이용하기위해 그냥 버튼이아닌 라디오 버튼을 이용해서 버튼을 만들어줬다.
+
+
+
+
+
+\- android:button="@null"
+
+
+라디오 버튼에 동그라미 버튼 부분 없애려면 속성에 이렇게 넣어주면된다.
+
+
+
+------
+
+## fragment안의 fragment 처리
+
+
+
+fragment안에서 fragment 처리할때는 activity에서 처리할때와 다르게 supportFragmentManager 를 사용하는것이 아닌
+
+
+
+childFragmentManager를 사용해야한다.
+
+
+
+또한 프래그먼트에서 부모의 프래그먼트 매니저를 접근하려면 ex)fragment1에서 activity의 fragment로 접근
+
+
+
+이럴경우에는 parentFragmentManager를 사용한다.
+
+
+
+https://ddangeun.tistory.com/127
+
+
+
+자세한 설명은 이 블로그를 참고하자
+
+
+
+------
+
+## glide 추가 사항
+
+
+
+dependency를 추가
+
+```
+implementation 'com.github.bumptech.glide:glide:4.11.0'
+annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+```
+
+
+
+옵션없는 이미지로드
+
+```
+/* Activity에서 사용할 경우 */
+
+Glide.with(this)
+    .load(R.drawable.img_file_name)
+    .into(imageView)
+/* ViewHolder에서 사용할 경우 */
+
+Glide.with(itemView)
+    .load(R.drawable.img_file_name)
+    .into(itemView.imageView)
+```
+
+뷰홀더에서는 itemview 을 binding.root로 대체하면된다.
+
+
+
+level 2-2 처럼 그냥 이미지 url넣어주면 알아서 표시됨glide
+
+
+
+각함수 설명
+
+- with() : View, Fragment 혹은 Activity로부터 Context를 가져온다.
+- load() : 이미지를 로드한다. 다양한 방법으로 이미지를 불러올 수 있다. (Bitmap, Drawable, String, Uri, File, ResourId(Int), ByteArray)
+- into() : 이미지를 보여줄 View를 지정한다.
+- placeholder() : Glide 로 이미지 로딩을 시작하기 전에 보여줄 이미지를 설정한다.
+- error() : 리소스를 불러오다가 에러가 발생했을 때 보여줄 이미지를 설정한다.
+- fallback() : load할 url이 null인 경우 등 비어있을 때 보여줄 이미지를 설정한다.
+- skipMemoryCache() : 메모리에 캐싱하지 않으려면 true로 준다.
+- diskCacheStrategy() : 디스크에 캐싱하지 않으려면 DiskCacheStrategy.NONE로 준다. 다음과 같은 옵션이 있다. (ALL, AUTOMATIC, DATA, NONE, RESOURCE)
+
+gif로딩기능 있는데 이건 로티쓰는게 더 좋은거아님?
+
+
+
+
+
+https://blog.yena.io/studynote/2020/06/10/Android-Glide.html
+
+
+
+기타 참고사항은 이블로그를 참고하자
+
+------
+
+## ViewPager2 중첩스크롤 문제 해결하기
+
+구글 공식문서에 나와있는 방법대로했다
+
+
+
+https://developer.android.com/training/animation/vp2-migration?hl=ko
+
+
+
+구체적인 방법은
+
+
+
+1.**NestedScrollableHost.kt 파일추가**
+
+
+
+https://github.com/android/views-widgets-samples/blob/master/ViewPager2/app/src/main/java/androidx/viewpager2/integration/testapp/NestedScrollableHost.kt
+
+
+
+링크의 내용을 긁어서 **NestedScrollableHost.kt 를 추가시켜준다.**
+
+
+
+**2.xml 에서 중첩되는 즉 내부의 스크롤뷰(viewpager2) 에 NestedScrollableHost 씌워주기**
+
+```
+    <androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar">
+
+                <com.google.android.material.tabs.TabLayout
+                    android:id="@+id/chipsLayout" />
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <com.nasrabadiam.widget.widget.NestedScrollableHost
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/chipsViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </com.nasrabadiam.widget.NestedScrollableHost>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+```
+
+이런식으로
+
+내부에 viewpager2를 NestedScrollableHost로 감싸준다.
+
+
+
+이러면 끝!!!!
+
+
+
+참고블로그:
+
+https://medium.com/@nasrabadiam/support-nested-scrollable-elements-inside-viewpager2-59fa34978899
+
+
+
+------
+
+## dataBinding을 리사이클러 뷰에 적용하기
+
+
+
+리펙토링을 해보자
+
+
+
+\1. 당연히 gradle추가해주고
+
+```
+android {
+    ...
+    dataBinding {
+        enabled = true
+    }
+}
+```
+
+
+
+2.리사이클러의 아이템뷰 의 xml을 <layout>으로 감싼다.
+
+
+
+
+
+![img](https://blog.kakaocdn.net/dn/dJC8Sd/btrjlQyfq0u/7UDDKw9REKXB6PkgPvLLsK/img.png)
+
+
+
+
+
+아이템을 감쌌다.
+
+
+
+3.data variable 추가
+
+layout안에 추가해준다
+
+```
+<data>
+
+        <variable
+            name="profileRecycler"
+            type="changhwan.experiment.sopthomework.FollowerData" />
+    </data>
+```
+
+
+
+
+
+4.view와 data를 @{}로 bind해준다.
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="profileRecycler"
+            type="changhwan.experiment.sopthomework.FollowerData" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/followerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="49dp"
+            android:layout_height="0dp"
+            android:layout_marginLeft="21dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:recyclerGlide="@{profileRecycler.followerImg}" />
+
+        <TextView
+            android:id="@+id/followerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="@{profileRecycler.followerName}"
+            android:textFontWeight="700"
+            android:textSize="16sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toEndOf="@+id/imageView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="이름" />
+
+        <TextView
+            android:id="@+id/followerIntro"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="24sp"
+            android:ellipsize="end"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="@{profileRecycler.followerIntro}"
+            android:textFontWeight="400"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/followerName"
+            app:layout_constraintTop_toBottomOf="@+id/followerName"
+            tools:text="자기소개" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
+```
+
+
+
+5.viewholder 클래스에서 binding객체에 데이터 담아준다.
+
+
+
+onbind 함수에서 일일히 다 넣었던거 그냥 itemview에서 설정해놓은 데이터 변수에 매번 들어오는 data를 넣어주는거로 바꿔준다.
+
+
+
+```
+ inner class FollowerViewHolder(
+        private val binding: FollowerItemBinding,
+        listener: ItemDragListener
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun onBind(data: FollowerData) {
+            binding.profileRecycler = data
+            // binding.executePendingBindings() -> 없어도 된단다 이거 바인딩할때 작업들 당장당장 수행하라고 강요하는 함수. 
+        }
+        //중략
+ }
+```
+
+
+
+6.이미지 같은거 처리를위해 bindingadpter 만들어주기
+
+```
+package changhwan.experiment.sopthomework
+
+
+import android.graphics.drawable.Drawable
+import android.widget.ImageView
+import androidx.databinding.BindingAdapter
+import androidx.lifecycle.MutableLiveData
+import com.bumptech.glide.Glide
+
+
+object BindingAdapters {
+
+    @JvmStatic
+    @BindingAdapter("recyclerGlide")
+    fun setImage (imageview : ImageView, url : MutableLiveData<String>){
+        Glide.with(imageview.context)
+            .load(url.value)
+            .circleCrop()
+            .into(imageview)
+    }
+}
+```
+
+기존에 bindingadapter 공부했던것처럼 처리 불가능한거 만들어준다. -> 이미지처리 이제 glide 추가했기에 그걸로 처리했다.
+
+
+
+그래서 이미지뷰에서 이미지 넣는부분이 이렇다
+
+```
+app:recyclerGlide="@{profileRecycler.followerImg}"
+```
+
+
+
+결론적으로 layout 감싸주고 데이터 만들어주는곳은 item이고
+
+viewholder에서 데이터 집어넣어주는형태이다
+
+
+
+참고블로그:
+
+https://salix97.tistory.com/244
+
+
+
+
+
+------
+
+## 갤러리에서 이미지 받아오기
+
+옛날에 프로젝트 할때는 라이브러리 이용해서 크롭기능과 앨범접근까지해서 권한설정까지 다해서 편했는데 그냥간단하게 하려고 라이브러리 이용 안하려니 오히려 더복잡하다. 어쨋든 이미지 끌고오는거 자체는 간편하니 갤러리로 intent를 통해접근해서 1장 uri로 받아오는 것을 다뤄보려한다.
+
+
+
+
+
+```
+package changhwan.experiment.sopthomework
+
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.database.DatabaseUtils
+import android.net.Uri
+import android.os.Bundle
+import android.provider.MediaStore
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import changhwan.experiment.sopthomework.databinding.FragmentCameraBinding
+
+
+class CameraFragment : Fragment() {
+
+    private var _binding : FragmentCameraBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var getContent: ActivityResultLauncher<Intent>
+    private lateinit var fContext : Context
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        fContext = context
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = DataBindingUtil.inflate(inflater,R.layout.fragment_camera, container, false)
+
+
+
+
+        binding.lifecycleOwner = this
+
+        initPicUri()
+        initIntent()
+
+        return binding.root
+    }
+
+    private fun initPicUri(){
+
+
+        getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val cameraData = CameraData(picUri = MutableLiveData<Uri>().apply { value = it.data?.data })
+            binding.camera = cameraData
+        }
+    }
+
+    private fun initIntent(){
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = MediaStore.Images.Media.CONTENT_TYPE
+            type = "image/*"
+        }
+
+
+
+
+        binding.cameraButton.setOnClickListener{
+            var permission = ContextCompat.checkSelfPermission(fContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            if(permission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+            } else {
+                getContent.launch(intent)
+            }
+        }
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object{
+        const val REQUEST_CODE = 1
+    }
+}
+```
+
+우선 전체 코드는 이렇고 이미지는 uri형태로 받아와서 변수에 넣고 그변수를 그냥 바로 databinding을 통해서 넣어줬다.
+
+
+
+쪼개서 보자면
+
+```
+ private lateinit var getContent: ActivityResultLauncher<Intent>
+```
+
+\1. getContent라는 변수 생성
+
+
+
+나중에 이렇게 초기화해준다
+
+
+
+```
+private fun initPicUri(){
+
+
+        getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val cameraData = CameraData(picUri = MutableLiveData<Uri>().apply { value = it.data?.data })
+            binding.camera = cameraData
+        }
+    }
+```
+
+
+
+원래 구글에서는 startActivityForResult가 아닌 기본으로 제공해주는 Contrat 함수인 GetContent()를 쓰라 하지만 이걸 이용하면 불변한 UI IMAGE PICKER 가 뜨게된다 그래서 그냥 ActivityResultContracts.StartActivityForResult() 를 이용해서 앨범에 접근하였다.
+
+
+
+2.인텐트 변수 만들기
+
+```
+private fun initIntent(){
+        val intent = Intent(Intent.ACTION_PICK).apply {
+            type = MediaStore.Images.Media.CONTENT_TYPE
+            type = "image/*"
+        }
+```
+
+
+
+이렇게 intent를 설정해준다.
+
+
+
+3.button에 눌리면 launch되도록 설정
+
+```
+ binding.cameraButton.setOnClickListener{
+            var permission = ContextCompat.checkSelfPermission(fContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            if(permission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+            } else {
+                getContent.launch(intent)
+            }
+        }
+```
+
+
+
+getContent.Launch(intent)를 통해서 앨범으로 넘어간다.
+
+
+
+나머지 코드는 권한 관련코드이다 권한에 대한것은 밑에 알아볼것이다.
+
+
+
+참고블로그:
+
+https://youngest-programming.tistory.com/517
+
+
+
+------
+
+## 갤러리 접근 권한 설정
+
+참고 액티비티와 프래그먼트에서 권한 받아오는게 은근 많이 다르다 이걸 좀 인지하고 가자 프래그먼트에서는 고려해야할것들이있다 -> 컨텍스트, 액티비티
+
+
+
+갤러리 접근하려면 권한을 얻어야한다.
+
+우선manifest에 storage 읽기쓰기 권한을 추가한다.
+
+```
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+```
+
+
+
+일단 자세하게 해야할것 모두 나와있는 블로그글과 간단하게 정리된 블로그글 하나씩 링크를 남겨놓는다.
+
+
+
+
+
+복잡:
+
+https://manorgass.tistory.com/74
+
+
+
+간단:
+
+https://superwony.tistory.com/101
+
+
+
+
+
+
+
+적용은 간단한걸로 했다.
+
+
+
+코드를 봐보자
+
+```
+ binding.cameraButton.setOnClickListener{
+            var permission = ContextCompat.checkSelfPermission(fContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+            if(permission == PackageManager.PERMISSION_DENIED) {
+                ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+            } else {
+                getContent.launch(intent)
+            }
+        }
+    }
+```
+
+
+
+ContextCompat.checkSelfPermission(fContext, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+
+
+이부분은 읽기 권한을 사용자에게 받았는지 안받았는지 가져오는 부분인데 첫번째 인자로 context를 넣어줘야한다.
+
+근데 fragment는 context가 없기에 부모 액티비티의 context를 가져와야하는데 2가지방법이있다
+
+------
+
+
+
+
+
+-부제 fragment에서 context 가져오기
+
+1.requireContext() 함수이용 이함수를 쓰면 getcontext 와는 다르게 notnull한 context를 반환한다.
+
+
+
+2.onAttach 함수 오버라이딩해서 context 받아오기
+
+onAttach의 인자로 부모의 context가 들어오기에 거기서 전역변수에 담아서 사용해도된다.
+
+
+
+
+
+![img](https://blog.kakaocdn.net/dn/qlc6e/btrjkio485o/KARgM6RwRmKAd1qWwwAwC0/img.png)
+
+
+
+------
+
+어쨋든 이렇게 context 가져와서 첫번째 인자에넣고 두번쨰 인자에 무슨 권한인지 넣어주면 권한을 받은지 안받은지 여부를 알려준다.
+
+
+
+그거를 조건문으로 권한 안받았으면 받는 코드를
+
+이미 받아져있다면 바로 실행해주는 코드를 짜고
+
+
+
+권한 받아오는 부분을 봐보자
+
+```
+ ActivityCompat.requestPermissions(requireActivity(),arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE)
+```
+
+이렇게
+
+ActivityCompat.requestPermissions 를 사용하는데 첫번째 인자가 activity를 요구한다.
+
+그래서 프래그 먼트에서 사용하는것을 검색해보니 그냥 requestPermissions를 이용하는 방법이나오는데 실행은 되지만 이건 deprecated 되었기에
+
+
+
+프래그먼트의 액티비티를 가져올수있는 방법을 봐보자
+
+------
+
+
+
+-부제 fragment에서 부모 activity가져오기
+
+
+
+requireActivity() 함수를 이용한다면 부모 Activity를 가져온다.
+
+getActivity와 다른점은 notNull한 Activity를 반환한다.
+
+
+
+------
+
+그래서 이렇게 ActivityCompat.requestPermissions 를 이용해서 권한을 받아온다.
+</details>
