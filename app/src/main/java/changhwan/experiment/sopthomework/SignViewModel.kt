@@ -9,7 +9,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class SignUpViewModel : ViewModel() {
+class SignViewModel : ViewModel() {
 
     private val _viewEmail = MutableLiveData<String>()
     private val _viewName = MutableLiveData<String>()
@@ -72,5 +72,39 @@ class SignUpViewModel : ViewModel() {
                 _conSuccess.value = false
             }
         })
+    }
+
+
+    fun startSignIn() {
+        val requestSignInData = RequestSignInData(
+            email = _viewEmail.value!!,
+            password = _viewPassword.value!!
+        )
+
+        val call : Call<ResponseSignInData> = ServiceCreator.signInService.postSignIn(requestSignInData)
+
+        call.enqueue(object : Callback<ResponseSignInData>{
+            override fun onResponse(
+                call: Call<ResponseSignInData>,
+                response: Response<ResponseSignInData>
+            ) {
+                val data = response.body()?.data
+
+                if(response.isSuccessful){
+                    if (data != null) {
+                        _viewName.value = data.name
+                    }
+                    _conSuccess.value = true
+                } else {
+                    _conSuccess.value = false
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSignInData>, t: Throwable) {
+                _conSuccess.value = false
+            }
+
+        })
+
     }
 }

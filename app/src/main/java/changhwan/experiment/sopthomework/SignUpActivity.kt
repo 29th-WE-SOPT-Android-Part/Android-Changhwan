@@ -3,19 +3,17 @@ package changhwan.experiment.sopthomework
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import changhwan.experiment.sopthomework.databinding.ActivitySignUpBinding
-import kotlin.concurrent.timer
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivitySignUpBinding
-    private val signupViewModel by viewModels<SignUpViewModel>()
+    private val signupViewModel by viewModels<SignViewModel>()
     val nameText = MutableLiveData<String>()
     val emailText = MutableLiveData<String>()
     val passwordText = MutableLiveData<String>()
@@ -59,9 +57,10 @@ class SignUpActivity : AppCompatActivity() {
 
         signupViewModel.conSuccess.observe(this, Observer {
             if (signupViewModel.conSuccess.value == true){
-                Toast.makeText(this@SignUpActivity, "${signupViewModel.viewEmail.value}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SignUpActivity, "${signupViewModel.viewEmail.value}님 안녕하세요", Toast.LENGTH_SHORT).show()
             } else{
                 Toast.makeText(this@SignUpActivity, "뭔지는 정확히 모르겠는데 통신이상하게됨", Toast.LENGTH_SHORT).show()
+                //이메일 아무거나 형식 안맞춰서 보내도 200으로 돌아옴 문제있다.
             }
         })
 
