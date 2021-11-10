@@ -45,6 +45,8 @@ class GitHubViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val data = response.body()
                     if (data != null) {
+                        _followerList.clear()
+                        _followerAvatarUrl.clear()
                         for (i in data) {
                             _followerList.add(MutableLiveData<String>().apply { value = i.login })
                             _followerAvatarUrl.add(MutableLiveData<String>().apply { value = i.avatar_url })
@@ -98,6 +100,7 @@ class GitHubViewModel : ViewModel() {
 
 
     fun getConclusionData() {
+        _conclusionData.clear()
         for (i in _followerList.indices) {
             _conclusionData.add(
                 FollowerData(
