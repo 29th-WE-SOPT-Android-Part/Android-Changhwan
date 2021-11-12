@@ -10,5 +10,5 @@ interface SignInService {
     @POST("user/login")
     suspend fun postSignIn(
         @Body body: RequestSignInData
-    ):Response<ResponseSignInData>
+    ):Response<ResponseWrapper<ResponseSignInData>>
 }
