@@ -1,12 +1,16 @@
 package changhwan.experiment.sopthomework
 
 
+import android.net.Network
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.coroutines.CoroutineContext
 
 
 class SignViewModel : ViewModel() {
@@ -81,30 +85,43 @@ class SignViewModel : ViewModel() {
             password = _viewPassword.value!!
         )
 
-        val call : Call<ResponseSignInData> = ServiceCreator.signInService.postSignIn(requestSignInData)
+//        val call : Call<ResponseSignInData> = ServiceCreator.signInService.postSignIn(requestSignInData)
+//
+//        call.enqueue(object : Callback<ResponseSignInData>{
+//            override fun onResponse(
+//                call: Call<ResponseSignInData>,
+//                response: Response<ResponseSignInData>
+//            ) {
+//                val data = response.body()?.data
+//
+//                if(response.isSuccessful){
+//                    if (data != null) {
+//                        _viewName.value = data.name
+//                    }
+//                    _conSuccess.value = true
+//                } else {
+//                    _conSuccess.value = false
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseSignInData>, t: Throwable) {
+//                _conSuccess.value = false
+//            }
+//
+//        })
 
-        call.enqueue(object : Callback<ResponseSignInData>{
-            override fun onResponse(
-                call: Call<ResponseSignInData>,
-                response: Response<ResponseSignInData>
-            ) {
-                val data = response.body()?.data
+        viewModelScope.launch {
+            val response = ServiceCreator.signInService.postSignIn(requestSignInData)
+            val data = response.body()?.data
 
-                if(response.isSuccessful){
-                    if (data != null) {
-                        _viewName.value = data.name
-                    }
-                    _conSuccess.value = true
-                } else {
-                    _conSuccess.value = false
+            if (response.isSuccessful) {
+                if (data != null) {
+                    _viewName.value = data.name
                 }
-            }
-
-            override fun onFailure(call: Call<ResponseSignInData>, t: Throwable) {
+                _conSuccess.value = true
+            } else {
                 _conSuccess.value = false
             }
-
-        })
-
+        }
     }
 }
