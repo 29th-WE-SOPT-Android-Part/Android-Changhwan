@@ -2692,3 +2692,1545 @@ getActivity와 다른점은 notNull한 Activity를 반환한다.
 
 그래서 이렇게 ActivityCompat.requestPermissions 를 이용해서 권한을 받아온다.
 </details>
+
+
+<details markdown="1">
+<summary>4주차</summary>
+
+# -실행화면
+
+https://user-images.githubusercontent.com/54737136/141431364-6a3f1123-c3aa-421a-9347-1d5670c4b8a1.mp4
+
+
+# -코드설명
+
+level1 다했고 아물론 로그인과 회원가입만함
+
+level2,3다함
+
+
+
+설명은 이번과제를 통해 배운내용에 다적어놨다.
+
+
+
+level1 sign in이 주라 sign in만 넣겠습니다 ㅎㅎ 지송
+
+RequestSignInData.kt
+
+```
+package changhwan.experiment.sopthomework
+
+data class RequestSignInData(
+    val email : String,
+    val password : String
+)
+```
+
+ResponseSigninData
+
+```
+package changhwan.experiment.sopthomework
+
+import android.provider.ContactsContract
+
+data class ResponseSignInData(
+    val id: Int,
+    val name: String,
+    val email: String
+)
+```
+
+SignInService.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
+
+interface SignInService {
+    @POST("user/login")
+    suspend fun postSignIn(
+        @Body body: RequestSignInData
+    ):Response<ResponseWrapper<ResponseSignInData>>
+}
+```
+
+
+
+serviceCreator.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object ServiceCreator {
+
+    private val headerInterceptor = Interceptor{
+        val request = it.request()
+            .newBuilder()
+            .addHeader("Content-Type","application/json")
+            .build()
+        return@Interceptor it.proceed(request)
+    }
+
+    val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(headerInterceptor)
+        .build()
+
+    private const val  SOPT_BASE_URL= "https://asia-northeast3-we-sopt-29.cloudfunctions.net/api/"
+
+    private val SoptRetrofit :Retrofit = Retrofit.Builder()
+        .baseUrl(SOPT_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val signUpService :SignUpService = SoptRetrofit.create(SignUpService::class.java)
+    val signInService :SignInService = SoptRetrofit.create(SignInService::class.java)
+
+
+    private const val  GITHUB_BASE_URL="https://api.github.com/"
+
+    private  val GitHubRetrofit : Retrofit = Retrofit.Builder()
+        .baseUrl(GITHUB_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+
+    val gitHubService :GitHubService = GitHubRetrofit.create(GitHubService::class.java)
+}
+```
+
+SignViewModel.kt
+
+```
+package changhwan.experiment.sopthomework
+
+
+import android.net.Network
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.CoroutineContext
+
+
+class SignViewModel : ViewModel() {
+
+    private val _viewEmail = MutableLiveData<String>()
+    private val _viewName = MutableLiveData<String>()
+    private val _viewPassword = MutableLiveData<String>()
+    private val _conSuccess = MutableLiveData<Boolean>()
+
+    val viewEmail: LiveData<String>
+        get() = _viewEmail
+    val viewName: LiveData<String>
+        get() = _viewName
+    val viewPassword: LiveData<String>
+        get() = _viewPassword
+    val conSuccess: LiveData<Boolean>
+        get() = _conSuccess
+
+
+    fun getEmail(email: String) {
+        _viewEmail.value = email
+    }
+
+    fun getName(name: String) {
+        _viewName.value = name
+    }
+
+    fun getPassword(password: String) {
+        _viewPassword.value = password
+    }
+
+    fun startSignUp() {
+        val requestSignUpData = RequestSignUpData(
+            email = _viewEmail.value!!,
+            name = _viewName.value!!,
+            password = _viewPassword.value!!
+        )
+
+        val call: Call<ResponseSignUpData> =
+            ServiceCreator.signUpService.postSignUp(requestSignUpData)
+
+        call.enqueue(object : Callback<ResponseSignUpData> {
+            override fun onResponse(
+                call: Call<ResponseSignUpData>,
+                response: Response<ResponseSignUpData>
+            ) {
+                if (response.isSuccessful) {
+                    val data = response.body()?.data
+
+                    if (data != null) {
+                        _viewName.value = data.name
+                        _viewEmail.value = data.email
+                    }
+
+                    _conSuccess.value = true
+
+                } else {
+                    _conSuccess.value = false
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSignUpData>, t: Throwable) {
+                _conSuccess.value = false
+            }
+        })
+    }
+
+
+    fun startSignIn() {
+        val requestSignInData = RequestSignInData(
+            email = _viewEmail.value!!,
+            password = _viewPassword.value!!
+        )
+
+//        val call : Call<ResponseSignInData> = ServiceCreator.signInService.postSignIn(requestSignInData)
+//
+//        call.enqueue(object : Callback<ResponseSignInData>{
+//            override fun onResponse(
+//                call: Call<ResponseSignInData>,
+//                response: Response<ResponseSignInData>
+//            ) {
+//                val data = response.body()?.data
+//
+//                if(response.isSuccessful){
+//                    if (data != null) {
+//                        _viewName.value = data.name
+//                    }
+//                    _conSuccess.value = true
+//                } else {
+//                    _conSuccess.value = false
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseSignInData>, t: Throwable) {
+//                _conSuccess.value = false
+//            }
+//
+//        })
+
+        viewModelScope.launch {
+            val response = ServiceCreator.signInService.postSignIn(requestSignInData)
+            val data = response.body()?.data
+
+            if (response.isSuccessful) {
+                if (data != null) {
+                    _viewName.value = data.name
+                }
+                _conSuccess.value = true
+            } else {
+                _conSuccess.value = false
+            }
+        }
+    }
+}
+```
+
+SignInActivity
+
+```
+package changhwan.experiment.sopthomework
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import changhwan.experiment.sopthomework.databinding.ActivitySignInBinding
+
+class SignInActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySignInBinding
+    private lateinit var  getResult : ActivityResultLauncher<Intent>
+    private val signInViewModel by viewModels<SignViewModel>()
+    val signInEmail = MutableLiveData<String>()
+    val signInPassword = MutableLiveData<String>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = DataBindingUtil.setContentView(this,R.layout.activity_sign_in)
+        binding.signInData = this
+        binding.lifecycleOwner = this
+
+        startLogin()
+        startSignUp()
+        observeSuccess()
+    }
+
+    private fun startLogin(){
+        binding.loginButton.setOnClickListener {
+            signInEmail.value?.let { signInViewModel.getEmail(it) }
+            signInPassword.value?.let { signInViewModel.getPassword(it) }
+            signInViewModel.startSignIn()
+
+        }
+    }
+
+    private fun observeSuccess(){
+        signInViewModel.conSuccess.observe(this, Observer {
+            if (signInViewModel.conSuccess.value == true) {
+                val intent = Intent(this,HomeActivity::class.java)
+                startActivity(intent)
+                Toast.makeText(this, "${signInViewModel.viewName.value}님 환영합니다", Toast.LENGTH_SHORT).show()
+            } else {
+                binding.inEditId.text.clear()
+                binding.inEditPw.text.clear()
+                Toast.makeText(this, "로그인실패", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun startSignUp(){
+        binding.signUpButton.setOnClickListener {
+            val intent = Intent(this,SignUpActivity::class.java)
+            getResult.launch(intent)
+        }
+
+        getResult = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()){
+            if(it.resultCode == RESULT_OK) {
+                binding.inEditId.text.clear()
+                binding.inEditId.text.append(it.data?.getStringExtra("Id"))
+                binding.inEditPw.text.clear()
+                binding.inEditPw.text.append(it.data?.getStringExtra("Pw"))
+            }
+        }
+    }
+
+
+
+}
+```
+
+
+
+
+
+level2-1
+
+ResponseGitHubFollowerData.kt
+
+```
+package changhwan.experiment.sopthomework
+
+data class ResponseGitHubFollowerData(
+    val login: String,
+    val id: Int,
+    val node_id: String,
+    val avatar_url: String,
+    val gravatar_id: String,
+    val url: String,
+    val html_url: String,
+    val followers_url: String,
+    val following_url: String,
+    val gists_url: String,
+    val starred_url: String,
+    val subscriptions_url: String,
+    val organizations_url: String,
+    val repos_url: String,
+    val events_url: String,
+    val received_events_url: String,
+    val type: String,
+    val site_admin: Boolean,
+)
+```
+
+ResponseGitHubUserData.kt
+
+```
+package changhwan.experiment.sopthomework
+
+data class ResponseGithubUserData(
+    val login: String,
+    val id: Int,
+    val node_id: String,
+    val avatar_url: String,
+    val gravatar_id: String,
+    val url: String,
+    val html_url: String,
+    val followers_url: String,
+    val following_url: String,
+    val gists_url: String,
+    val starred_url: String,
+    val subscriptions_url: String,
+    val organizations_url: String,
+    val repos_url: String,
+    val events_url: String,
+    val received_events_url: String,
+    val type: String,
+    val site_admin: Boolean,
+    val name: String,
+    val company: String?,
+    val blog: String?,
+    val location: String?,
+    val email: String?,
+    val hireable: String?,
+    val bio: String?,
+    val twitter_username: String?,
+    val public_repos: Int?,
+    val public_gists: Int?,
+    val followers: Int,
+    val following: Int,
+    val created_at: String,
+    val updated_at: String
+)
+```
+
+GitHubService.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Path
+
+interface GitHubService {
+
+    @GET("users/{userId}/followers")
+    fun getGitHubFollowers(
+        @Path("userId") userId:String
+    ): Call<List<ResponseGitHubFollowerData>>
+
+    @GET("users/{userId}")
+    fun getGitHubUsers(
+        @Path("userId") userId:String
+    ): Call<ResponseGithubUserData>
+}
+```
+
+serviceCreator.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object ServiceCreator {
+
+    private val headerInterceptor = Interceptor{
+        val request = it.request()
+            .newBuilder()
+            .addHeader("Content-Type","application/json")
+            .build()
+        return@Interceptor it.proceed(request)
+    }
+
+    val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(headerInterceptor)
+        .build()
+
+    private const val  SOPT_BASE_URL= "https://asia-northeast3-we-sopt-29.cloudfunctions.net/api/"
+
+    private val SoptRetrofit :Retrofit = Retrofit.Builder()
+        .baseUrl(SOPT_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val signUpService :SignUpService = SoptRetrofit.create(SignUpService::class.java)
+    val signInService :SignInService = SoptRetrofit.create(SignInService::class.java)
+
+
+    private const val  GITHUB_BASE_URL="https://api.github.com/"
+
+    private  val GitHubRetrofit : Retrofit = Retrofit.Builder()
+        .baseUrl(GITHUB_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+
+    val gitHubService :GitHubService = GitHubRetrofit.create(GitHubService::class.java)
+}
+```
+
+GitHubViewModel.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+
+class GitHubViewModel : ViewModel() {
+
+    private val _followerList = mutableListOf<MutableLiveData<String>>()
+    private val _followerAvatarUrl = mutableListOf<MutableLiveData<String>>()
+    private val _bio = mutableListOf<MutableLiveData<String>>()
+    private val _conclusionData = mutableListOf<FollowerData>()
+    private val _getFollowerDataDone = MutableLiveData<Event<String>>()
+    private val _getUserDataDone = MutableLiveData<Event<String>>()
+    private val _getConclusionDataDone = MutableLiveData<Event<String>>()
+
+    val followerList: List<MutableLiveData<String>>
+        get() = _followerList
+    val followerAvatarUrl: List<MutableLiveData<String>>
+        get() = _followerAvatarUrl
+    val bio: List<MutableLiveData<String>>
+        get() = _bio
+    val conclusionData: List<FollowerData>
+        get() = _conclusionData
+    val getFollowerDataDone: LiveData<Event<String>>
+        get() = _getFollowerDataDone
+    val getUserDataDone: LiveData<Event<String>>
+        get() = _getUserDataDone
+    val getConclusionDataDone: LiveData<Event<String>>
+        get() = _getConclusionDataDone
+
+    fun getGitHubFollowerData() {
+        val call: Call<List<ResponseGitHubFollowerData>> =
+            ServiceCreator.gitHubService.getGitHubFollowers("2chang5")
+
+        call.enqueue(object : Callback<List<ResponseGitHubFollowerData>> {
+            override fun onResponse(
+                call: Call<List<ResponseGitHubFollowerData>>,
+                response: Response<List<ResponseGitHubFollowerData>>
+            ) {
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    if (data != null) {
+                        _followerList.clear()
+                        _followerAvatarUrl.clear()
+                        for (i in data) {
+                            _followerList.add(MutableLiveData<String>().apply { value = i.login })
+                            _followerAvatarUrl.add(MutableLiveData<String>().apply { value = i.avatar_url })
+                        }
+                    }
+                    _getFollowerDataDone.value = Event("followerDone")
+                }
+            }
+
+            override fun onFailure(call: Call<List<ResponseGitHubFollowerData>>, t: Throwable) {
+
+            }
+
+        })
+    }
+
+    fun getGitHubUserData() {
+        for (i in _followerList) {
+            val call: Call<ResponseGithubUserData>? = i.value?.let {
+                ServiceCreator.gitHubService.getGitHubUsers(
+                    it
+                )
+            }
+
+            if (call != null) {
+                call.enqueue(object : Callback<ResponseGithubUserData> {
+                    override fun onResponse(
+                        call: Call<ResponseGithubUserData>,
+                        response: Response<ResponseGithubUserData>
+                    ) {
+                        if (response.isSuccessful) {
+                            val data = response.body()?.bio
+
+                            _bio.add(MutableLiveData<String>().apply { value = data })
+                            if(i == _followerList.last()){
+                                _getUserDataDone.value = Event("UserDone")
+                            }
+                        } else{
+
+                        }
+
+                    }
+
+                    override fun onFailure(call: Call<ResponseGithubUserData>, t: Throwable) {
+
+                    }
+                })
+            }
+        }
+    }
+
+
+    fun getConclusionData() {
+        _conclusionData.clear()
+        for (i in _followerList.indices) {
+            _conclusionData.add(
+                FollowerData(
+                    followerName = _followerList[i],
+                    followerImg = _followerAvatarUrl[i],
+                    followerIntro = _bio[i]
+                    )
+            )
+        }
+        _getConclusionDataDone.value = Event("ConclusionDone")
+    }
+}
+```
+
+FollowerFragmnet.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.graphics.Color
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import changhwan.experiment.sopthomework.databinding.FragmentFollowerBinding
+
+
+class FollowerFragment : Fragment(), ItemDragListener {
+
+    private var _binding: FragmentFollowerBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var followerAdapter: FollowerAdapter
+    private lateinit var itemTouchHelper : ItemTouchHelper
+    private val gitHubViewModel by activityViewModels<GitHubViewModel>()
+
+
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+
+        gitHubViewModel.getGitHubFollowerData()
+        gitHubViewModel.getFollowerDataDone.observe(viewLifecycleOwner, EventObserver{
+            gitHubViewModel.getGitHubUserData()
+        })
+        gitHubViewModel.getUserDataDone.observe(viewLifecycleOwner, EventObserver{
+            gitHubViewModel.getConclusionData()
+        })
+
+        _binding = FragmentFollowerBinding.inflate(layoutInflater, container, false)
+        return binding.root
+
+
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        gitHubViewModel.getConclusionDataDone.observe(viewLifecycleOwner,EventObserver{
+            siteFollowerRecycler()
+
+            binding.followerRecycle.addItemDecoration(CustomMarginDecoration(24))
+            binding.followerRecycle.addItemDecoration(CustomDividerDecoration(1f,10f, resources.getColor(R.color.divider),40))
+
+            itemTouchHelper = ItemTouchHelper(ItemTouchHelperCallback(followerAdapter))
+            itemTouchHelper.attachToRecyclerView(binding.followerRecycle)
+        })
+
+    }
+
+    fun siteFollowerRecycler(){
+        followerAdapter = FollowerAdapter(this)
+
+        binding.followerRecycle.adapter = followerAdapter
+
+        followerAdapter.followerData.clear()
+
+        followerAdapter.followerData.addAll(
+            gitHubViewModel.conclusionData
+        )
+
+
+
+        //diffUtill부분 원래는 followerAdapter.notifyDataSetChanged()였음
+        followerAdapter.setContact(followerAdapter.followerData)
+        //여기까지
+    }
+
+    override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+```
+
+
+
+2-2
+
+ServiceCreator.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object ServiceCreator {
+
+    private val headerInterceptor = Interceptor{
+        val request = it.request()
+            .newBuilder()
+            .addHeader("Content-Type","application/json")
+            .build()
+        return@Interceptor it.proceed(request)
+    }
+
+    val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(headerInterceptor)
+        .build()
+
+    private const val  SOPT_BASE_URL= "https://asia-northeast3-we-sopt-29.cloudfunctions.net/api/"
+
+    private val SoptRetrofit :Retrofit = Retrofit.Builder()
+        .baseUrl(SOPT_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val signUpService :SignUpService = SoptRetrofit.create(SignUpService::class.java)
+    val signInService :SignInService = SoptRetrofit.create(SignInService::class.java)
+
+
+    private const val  GITHUB_BASE_URL="https://api.github.com/"
+
+    private  val GitHubRetrofit : Retrofit = Retrofit.Builder()
+        .baseUrl(GITHUB_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+
+    val gitHubService :GitHubService = GitHubRetrofit.create(GitHubService::class.java)
+}
+```
+
+
+
+2-3
+
+ResponseWrapper.kt
+
+```
+package changhwan.experiment.sopthomework
+
+data class ResponseWrapper<T>(
+    val status: Int,
+    val success: Boolean,
+    val message: String,
+    val data: T?
+)
+```
+
+
+
+ResponseSignInData.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.provider.ContactsContract
+
+data class ResponseSignInData(
+    val id: Int,
+    val name: String,
+    val email: String
+)
+```
+
+SignInService.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
+
+interface SignInService {
+    @POST("user/login")
+    suspend fun postSignIn(
+        @Body body: RequestSignInData
+    ):Response<ResponseWrapper<ResponseSignInData>>
+}
+```
+
+
+
+3
+
+SignInService.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
+
+interface SignInService {
+    @POST("user/login")
+    suspend fun postSignIn(
+        @Body body: RequestSignInData
+    ):Response<ResponseWrapper<ResponseSignInData>>
+}
+```
+
+
+
+SignViewModel.kt
+
+```
+package changhwan.experiment.sopthomework
+
+
+import android.net.Network
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.CoroutineContext
+
+
+class SignViewModel : ViewModel() {
+
+    private val _viewEmail = MutableLiveData<String>()
+    private val _viewName = MutableLiveData<String>()
+    private val _viewPassword = MutableLiveData<String>()
+    private val _conSuccess = MutableLiveData<Boolean>()
+
+    val viewEmail: LiveData<String>
+        get() = _viewEmail
+    val viewName: LiveData<String>
+        get() = _viewName
+    val viewPassword: LiveData<String>
+        get() = _viewPassword
+    val conSuccess: LiveData<Boolean>
+        get() = _conSuccess
+
+
+    fun getEmail(email: String) {
+        _viewEmail.value = email
+    }
+
+    fun getName(name: String) {
+        _viewName.value = name
+    }
+
+    fun getPassword(password: String) {
+        _viewPassword.value = password
+    }
+
+    fun startSignUp() {
+        val requestSignUpData = RequestSignUpData(
+            email = _viewEmail.value!!,
+            name = _viewName.value!!,
+            password = _viewPassword.value!!
+        )
+
+        val call: Call<ResponseSignUpData> =
+            ServiceCreator.signUpService.postSignUp(requestSignUpData)
+
+        call.enqueue(object : Callback<ResponseSignUpData> {
+            override fun onResponse(
+                call: Call<ResponseSignUpData>,
+                response: Response<ResponseSignUpData>
+            ) {
+                if (response.isSuccessful) {
+                    val data = response.body()?.data
+
+                    if (data != null) {
+                        _viewName.value = data.name
+                        _viewEmail.value = data.email
+                    }
+
+                    _conSuccess.value = true
+
+                } else {
+                    _conSuccess.value = false
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSignUpData>, t: Throwable) {
+                _conSuccess.value = false
+            }
+        })
+    }
+
+
+    fun startSignIn() {
+        val requestSignInData = RequestSignInData(
+            email = _viewEmail.value!!,
+            password = _viewPassword.value!!
+        )
+
+//        val call : Call<ResponseSignInData> = ServiceCreator.signInService.postSignIn(requestSignInData)
+//
+//        call.enqueue(object : Callback<ResponseSignInData>{
+//            override fun onResponse(
+//                call: Call<ResponseSignInData>,
+//                response: Response<ResponseSignInData>
+//            ) {
+//                val data = response.body()?.data
+//
+//                if(response.isSuccessful){
+//                    if (data != null) {
+//                        _viewName.value = data.name
+//                    }
+//                    _conSuccess.value = true
+//                } else {
+//                    _conSuccess.value = false
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<ResponseSignInData>, t: Throwable) {
+//                _conSuccess.value = false
+//            }
+//
+//        })
+
+        viewModelScope.launch {
+            val response = ServiceCreator.signInService.postSignIn(requestSignInData)
+            val data = response.body()?.data
+
+            if (response.isSuccessful) {
+                if (data != null) {
+                    _viewName.value = data.name
+                }
+                _conSuccess.value = true
+            } else {
+                _conSuccess.value = false
+            }
+        }
+    }
+}
+```
+
+
+
+
+
+# -이번과제를 통해 배운내용
+
+## **ViewModel관련**
+
+과제 4주차 보면 알듯이
+
+뷰모델에서 비동기적으로 정보 끌어오는거 처리해서 가져와서 저장했었고 그에 따른 처리
+
+인텐트나 토스트 메세지 등등은 액티비티에서 실행했다
+
+
+
+근데 정보가져오는 버튼 리스너 에서 뷰모델의 비동기처리를하고 동시에
+
+정보가져오는거 뿌려주는걸하면 비동기처리가 끝나기도 전에 실행해서
+
+nullpointexception이나 내가 원하는걸 처리하지 못하는 일이 발생했다.
+
+
+
+그래도 토스트메세지나 인텐트같은 액티비티에서 처리해야할것들은 따로있기에 방법을 생각해서
+
+비동기 완료 여부를 나타내는 변수를 boolean형태로 라이브데이터로 놓고 옵저버를 달아서 변화가있을경우 처리하도록했다 그리고 비동기처리 성공여부 200인지 400인지는 변수에 true/false여부로 판단하였다.
+
+
+
+그래서 해결은 했지만 뭔가 더 좋은 방법이없나싶어 문다빈에게 물어봤는데
+
+맞는 방법인데 boolean형태로 실제 사용되는 데이터 값이아닌 이벤트처리에만 사용되는 변수는 Event wapper개념을
+
+사용하는것이 맞다고한다
+
+-> 추후에 관련 정리글을 써야겠다.
+
+[https://medium.com/prnd/mvvm%EC%9D%98-viewmodel%EC%97%90%EC%84%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8%EB%A5%BC-%EC%B2%98%EB%A6%AC%ED%95%98%EB%8A%94-%EB%B0%A9%EB%B2%95-6%EA%B0%80%EC%A7%80-31bb183a88ce](https://medium.com/prnd/mvvm의-viewmodel에서-이벤트를-처리하는-방법-6가지-31bb183a88ce)
+
+관련 블로그글이다 또한 더욱 발전한 내용들도있으니 참고하자
+
+
+
+또한 로그인할때 edittext에 담긴 text같은것들은 sharedPreference에 저장해서 가지고 오는것이 좋다고한다.
+
+이부분도 참고해서 수정해보자
+
+
+
+또한 이런부분에서 뷰모델에서 비동기처리가 끝난후 액티비티에서 코드를 처리하는것에 다른 좋은 방법이 없나 물어본결과
+
+StateFlow라는 코루틴 개념중에 하나가 있는데 너무어려울것이니 나중에 사용해보라는 조언이있었다.
+
+------
+
+## 2-1 github api 적용하기
+
+시행 착오가 정말 많았다 여기서 가져가야할것들을 살펴보자
+
+1.get사용방법
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Headers
+import retrofit2.http.Path
+
+interface GitHubService {
+
+    @GET("users/{userId}/followers")
+    fun getGitHubFollowers(
+        @Path("userId") userId:String
+    ): Call<List<ResponseGitHubFollowerData>>
+
+    @GET("users/{userId}")
+    fun getGitHubUsers(
+        @Path("userId") userId:String
+    ): Call<ResponseGithubUserData>
+}
+```
+
+이런식으로 인터페이스 하나에 여러개의 http메서드 넣을수있고 중간에 path 부분을 끼워넣을수있다
+
+"users/{userId}/followers" 예시처럼
+
+
+
+
+
+2.여러개의 api사용해서 baseurl여러개인경우
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object ServiceCreator {
+    private const val  SOPT_BASE_URL= "https://asia-northeast3-we-sopt-29.cloudfunctions.net/api/"
+
+    private val SoptRetrofit :Retrofit = Retrofit.Builder()
+        .baseUrl(SOPT_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val signUpService :SignUpService = SoptRetrofit.create(SignUpService::class.java)
+    val signInService :SignInService = SoptRetrofit.create(SignInService::class.java)
+
+
+    private const val  GITHUB_BASE_URL="https://api.github.com/"
+
+    private  val GitHubRetrofit : Retrofit = Retrofit.Builder()
+        .baseUrl(GITHUB_BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+
+    val gitHubService :GitHubService = GitHubRetrofit.create(GitHubService::class.java)
+}
+```
+
+retrofit 객체 두개만들어서 그냥 쓰면된다.
+
+
+
+
+
+3.서버통신할때는 앞전 데이터 불러오는 작업이 끝나고 다음것을 불러오도록(앞데이터가 뒤쪽에 불러오는것을 관여할때) 잘 로직을 짜야한다 머리를 굴리자
+
+
+
+## **Log**
+
+-> 또한 이럴때 잘안되면
+
+
+
+![img](https://blog.kakaocdn.net/dn/bvmJVh/btrktc2dY7t/AvcKE6f8UYFDJv1yeM8c4K/img.png)
+
+
+
+Log.d를 이용해서 찍어보자
+
+
+
+
+
+![img](https://blog.kakaocdn.net/dn/byFTn3/btrkqHPcSa1/fbBmk3gMLNwBIuSHZbLW9K/img.png)
+
+
+
+이렇게 검색해서 봐라
+
+------
+
+## **오류처리**
+
+
+
+그리고 오류나면
+
+
+
+logcat에서
+
+
+
+![img](https://blog.kakaocdn.net/dn/EGGTr/btrkxPK461v/hGxHbDsmHQeOmplVhjZXL1/img.png)
+
+
+
+error로 선택하고 exception놓으면 오류 뭔지 나온다 그거보고 해결해보자
+
+------
+
+
+
+
+
+이번에 서버통신하며 데이터 가져오면서 골치 아팠던거
+
+```
+fun getGitHubUserData() {
+        for (i in _followerList) {
+            val call: Call<ResponseGithubUserData>? = i.value?.let {
+                ServiceCreator.gitHubService.getGitHubUsers(
+                    it
+                )
+            }
+
+            if (call != null) {
+                call.enqueue(object : Callback<ResponseGithubUserData> {
+                    override fun onResponse(
+                        call: Call<ResponseGithubUserData>,
+                        response: Response<ResponseGithubUserData>
+                    ) {
+                        if (response.isSuccessful) {
+                            val data = response.body()?.bio
+
+                            _bio.add(MutableLiveData<String>().apply { value = data })
+                            if(i == _followerList.last()){
+                                _getUserDataDone.value = Event("UserDone")
+                            }
+                        } else{
+
+                        }
+
+                    }
+
+                    override fun onFailure(call: Call<ResponseGithubUserData>, t: Throwable) {
+
+                    }
+                })
+            }
+        }
+    }
+```
+
+getUserDataDone 업데이트 시기 첫번째 비동기처리나 아니면 for문 끝에 붙여놓으면 문제있었음 비동기라 먼저 처리되서
+
+뒤쪽 코드에서 오류났음 그래서 마지막 비동기 처리에서 바꿀수있도록
+
+```
+if(i == _followerList.last()){
+   _getUserDataDone.value = Event("UserDone")
+}
+```
+
+이부분을 추가해서 마지막 원소일때 Event의 변화가 오도록했다.
+
+
+
+
+
+그리고 Event를 쓴다고 라이브데이터가 변화를 안하는게 아니다 null값으로 계속 업데이트되고
+
+그에따라 이벤트 계속 발생한다.
+
+-> 리스트가 계속 추가되는 문제가 생겼었다.
+
+해결방법
+
+매번 list업데이트 하기전 clear하도록 죄다 clear붙여줬다. 그럼 초기화후 들어가므로 괜찮아졌다.
+
+
+
+![img](https://blog.kakaocdn.net/dn/G253J/btrkqHhoS5D/ohPTXU5U3YUJoP1vNGjc0K/img.png)
+
+
+
+
+
+------
+
+## **OKHTTP3로 header 자동으로 추가해주기**
+
+
+
+**okhttp에 interceptor로 중간에서 처리를해서 서버로 보낼수있다.**
+
+
+
+우선 gradle을 추가해주고
+
+```
+//okhttp3
+    implementation 'com.squareup.okhttp3:okhttp:3.14.9'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
+```
+
+
+
+다음은 실제 객체 구현해주는 부분에서
+
+okhttp 객체도 구현해주고
+
+interceptor도 만들어서
+
+retrofit 객체를 만들때 client에다가 추가해주면된다.
+
+
+
+header추가외에도 더 많은 기능이있다 추후에 찾아봐야겠다.
+
+```
+object ServiceCreator {
+
+    private val headerInterceptor = Interceptor{
+        val request = it.request()
+            .newBuilder()
+            .addHeader("Content-Type","application/json")
+            .build()
+        return@Interceptor it.proceed(request)
+    }
+
+    val client: OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor(headerInterceptor)
+        .build()
+
+    private const val  SOPT_BASE_URL= "https://asia-northeast3-we-sopt-29.cloudfunctions.net/api/"
+
+    private val SoptRetrofit :Retrofit = Retrofit.Builder()
+        .baseUrl(SOPT_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val signUpService :SignUpService = SoptRetrofit.create(SignUpService::class.java)
+    val signInService :SignInService = SoptRetrofit.create(SignInService::class.java)
+```
+
+interceptor에 addHeader를 통해 헤더를 다는부분을 만들어주고 빌드한후
+
+
+
+OkHttpClient도 아까 만든 interceptor를 addInterceptor를 통해 추가해서 build해준후
+
+
+
+retrofit 객체만들때 client에 추가해준다.
+
+
+
+
+
+참고 블로그
+
+https://hwanine.github.io/android/Retrofit-OkHttp/
+
+[ Android - Retrofit2, OkHttp를 함께 사용하여 더욱 간결한 RestAPI 연동 (Kotlin) (2)Retrofit과 OkHttp를 함께 사용하여 더욱 간결하게 네이버 RestAPI와의 연동하는 과정을 소개하겠습니다.hwanine.github.io](https://hwanine.github.io/android/Retrofit-OkHttp/)
+
+------
+
+## **2-3 Wrapper 클래스**
+
+
+
+앞쪽에 계속 중복되는 부분들 어떻게 처리할수있는가?
+
+
+
+어짜피 없애려는 부분은 계속해서 같은게 나올것이다 그거 미리 wrapper class 를 통해서 작성해놓고
+
+
+
+나머지 다른부분만 새로 작성해서 넣어주는 방식으로 처리한다.
+
+
+
+과제에서는 signin 부분만 적용했다.
+
+
+
+
+
+![img](https://blog.kakaocdn.net/dn/burBvA/btrkHnuHhEv/r0kgCA3vH3QTqeIEAkH9SK/img.png)
+
+
+
+이걸 고치는것이다.
+
+
+
+ResponseWrapper.kt
+
+```
+package changhwan.experiment.sopthomework
+
+data class ResponseWrapper<T>(
+    val status: Int,
+    val success: Boolean,
+    val message: String,
+    val data: T?
+)
+```
+
+
+
+이렇게 미리 wrapper class로 중복된부분을 작성해놓는다.
+
+
+
+
+
+ResponseSignInData.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.provider.ContactsContract
+
+data class ResponseSignInData(
+    val id: Int,
+    val name: String,
+    val email: String
+)
+```
+
+다음 이렇게 오는 정보들 안에다 넣어줄꺼 작성해서
+
+
+
+사용할때는 하나로 합쳐서 넣어준다.
+
+
+
+SignInService.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
+
+interface SignInService {
+    @POST("user/login")
+    suspend fun postSignIn(
+        @Body body: RequestSignInData
+    ):Response<ResponseWrapper<ResponseSignInData>>
+}
+```
+
+
+
+```
+<ResponseWrapper<ResponseSignInData>>
+```
+
+요런식으로 사용하는것이다.
+
+
+
+
+
+------
+
+## **3-3 coroutine**
+
+진짜진짜 맛배기로만해서 뭐가 맞는지도 잘모른다. 나중에 추후 공부를 더할거지만
+
+실행도 잘되긴하고 여기저기 물어본결과 맞는방식인거같다.
+
+
+
+
+
+
+
+사용방법은 의외로 간단하다 view model을 써서 viewmodelscope를 사용해서 잡다한거 알아서 되서 쉬웠던것도 있는거같다.
+
+
+
+\1. gradle 추가
+
+```
+// ViewModel coroutine 스코프를 위한거
+implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.1.0"
+     
+//coroutine
+implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0")
+implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3'
+```
+
+
+
+2.suspend키워드 사용할 함수에 달아주기 + Call객체가아닌 Response객체 가져오는걸로 바꿔주기
+
+
+
+SignInService.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import retrofit2.Call
+import retrofit2.Response
+import retrofit2.http.Body
+import retrofit2.http.Headers
+import retrofit2.http.POST
+
+interface SignInService {
+    @POST("user/login")
+    suspend fun postSignIn(
+        @Body body: RequestSignInData
+    ):Response<ResponseWrapper<ResponseSignInData>>
+}
+```
+
+
+
+postSignIn 함수에 suspend 키워드를 달아줬다.
+
+그리고 Call객체를 반환하는것이아닌 Response객체를 반환하는걸로 바꿔줬다.
+
+
+
+3.이제 callback에서 처리하던거 대체하기
+
+
+
+원래 callback 으로 차리하면 코드가 이랬다.
+
+```
+ fun startSignIn() {
+        val requestSignInData = RequestSignInData(
+            email = _viewEmail.value!!,
+            password = _viewPassword.value!!
+        )
+
+        val call : Call<ResponseSignInData> = ServiceCreator.signInService.postSignIn(requestSignInData)
+
+        call.enqueue(object : Callback<ResponseSignInData>{
+            override fun onResponse(
+                call: Call<ResponseSignInData>,
+                response: Response<ResponseSignInData>
+            ) {
+                val data = response.body()?.data
+
+                if(response.isSuccessful){
+                    if (data != null) {
+                        _viewName.value = data.name
+                    }
+                    _conSuccess.value = true
+                } else {
+                    _conSuccess.value = false
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseSignInData>, t: Throwable) {
+                _conSuccess.value = false
+            }
+
+        })
+}
+```
+
+
+
+근데 이거 액티비티면 기타등등 사전작업들을 하고 사용해야하는데
+
+그냥 viewmodel내라서 viewModelScope를 사용해서
+
+그냥 viewModelScope.launch{}내부에 불러오는거랑 그다음에 데이터 불러온거 처리하는 로직 넣어주면 비동기로 알아서 처리한다.
+
+```
+viewModelScope.launch {
+            val response = ServiceCreator.signInService.postSignIn(requestSignInData)
+            val data = response.body()?.data
+
+            if (response.isSuccessful) {
+                if (data != null) {
+                    _viewName.value = data.name
+                }
+                _conSuccess.value = true
+            } else {
+                _conSuccess.value = false
+            }
+        }
+```
+
+이렇게 처리하면된다 코드 간결해진다 진짜.
+
+
+
+그리고 response는 아까 인터페이스에서 반환하는거 Response로 바꿔놨으니 이제 저렇게 받아오면 Response를 받아와진다
+
+그래서 그중원하는거 body값 에 data 빼와서 처리해주면된다.
+
+
+
+
+
+참고블로그
+
+https://enant.tistory.com/24
+
+
+
+https://enant.tistory.com/23   <-근데 이부분은 쓸모가없었다 사실 그냥 이런느낌만 가지는용도로 보면된다.
+
+
+
+https://developer88.tistory.com/214
+
+
+</details>
