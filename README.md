@@ -2701,6 +2701,21 @@ getActivity와 다른점은 notNull한 Activity를 반환한다.
 
 https://user-images.githubusercontent.com/54737136/141431364-6a3f1123-c3aa-421a-9347-1d5670c4b8a1.mp4
 
+## -포스트맨
+
+
+![로그인](https://user-images.githubusercontent.com/54737136/141437439-c730bf47-2818-46e9-9c4c-f68c0e4fc1d6.png)
+
+
+![회원가입](https://user-images.githubusercontent.com/54737136/141437366-9451a309-918a-44bd-b32d-06c0f984f724.png)
+
+
+![회원조회 email](https://user-images.githubusercontent.com/54737136/141437450-7cc01be0-145a-48bf-a1f9-7dbd340ab882.png)
+
+
+![회원조회 userid](https://user-images.githubusercontent.com/54737136/141437465-ca8d11dc-b3dd-4edd-875a-e07b08df0bc7.png)
+
+
 
 # -코드설명
 
