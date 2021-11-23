@@ -9,11 +9,13 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import changhwan.experiment.sopthomework.databinding.ActivitySignUpBinding
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivitySignUpBinding
-    private val signupViewModel by viewModels<SignViewModel>()
+    private val signupViewModel : SignViewModel by inject()
     val nameText = MutableLiveData<String>()
     val emailText = MutableLiveData<String>()
     val passwordText = MutableLiveData<String>()

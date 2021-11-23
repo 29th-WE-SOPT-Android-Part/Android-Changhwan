@@ -7,13 +7,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
+import org.koin.java.KoinJavaComponent.get
+import org.koin.java.KoinJavaComponent.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.coroutines.CoroutineContext
 
+class SignViewModel(private val signInService : SignInService, private val signUpService: SignUpService) : ViewModel() {
 
-class SignViewModel : ViewModel() {
 
     private val _viewEmail = MutableLiveData<String>()
     private val _viewName = MutableLiveData<String>()
@@ -43,6 +45,7 @@ class SignViewModel : ViewModel() {
     }
 
     fun startSignUp() {
+
         val requestSignUpData = RequestSignUpData(
             email = _viewEmail.value!!,
             name = _viewName.value!!,
@@ -50,7 +53,7 @@ class SignViewModel : ViewModel() {
         )
 
         val call: Call<ResponseSignUpData> =
-            ServiceCreator.signUpService.postSignUp(requestSignUpData)
+           signUpService.postSignUp(requestSignUpData)
 
         call.enqueue(object : Callback<ResponseSignUpData> {
             override fun onResponse(
@@ -111,7 +114,7 @@ class SignViewModel : ViewModel() {
 //        })
 
         viewModelScope.launch {
-            val response = ServiceCreator.signInService.postSignIn(requestSignInData)
+            val response = signInService.postSignIn(requestSignInData)
             val data = response.body()?.data
 
             if (response.isSuccessful) {

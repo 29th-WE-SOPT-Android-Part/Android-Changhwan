@@ -11,18 +11,20 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import changhwan.experiment.sopthomework.databinding.ActivitySignInBinding
+import org.koin.android.ext.android.inject
+import org.koin.java.KoinJavaComponent.inject
 
 class SignInActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignInBinding
-    private lateinit var  getResult : ActivityResultLauncher<Intent>
-    private val signInViewModel by viewModels<SignViewModel>()
+    private lateinit var getResult: ActivityResultLauncher<Intent>
+    private val signInViewModel: SignViewModel by inject()
     val signInEmail = MutableLiveData<String>()
     val signInPassword = MutableLiveData<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = DataBindingUtil.setContentView(this,R.layout.activity_sign_in)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_sign_in)
         binding.signInData = this
         binding.lifecycleOwner = this
 
@@ -31,7 +33,7 @@ class SignInActivity : AppCompatActivity() {
         observeSuccess()
     }
 
-    private fun startLogin(){
+    private fun startLogin() {
         binding.loginButton.setOnClickListener {
             signInEmail.value?.let { signInViewModel.getEmail(it) }
             signInPassword.value?.let { signInViewModel.getPassword(it) }
@@ -40,12 +42,13 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeSuccess(){
+    private fun observeSuccess() {
         signInViewModel.conSuccess.observe(this, Observer {
             if (signInViewModel.conSuccess.value == true) {
-                val intent = Intent(this,HomeActivity::class.java)
+                val intent = Intent(this, HomeActivity::class.java)
                 startActivity(intent)
-                Toast.makeText(this, "${signInViewModel.viewName.value}님 환영합니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "${signInViewModel.viewName.value}님 환영합니다", Toast.LENGTH_SHORT)
+                    .show()
             } else {
                 binding.inEditId.text.clear()
                 binding.inEditPw.text.clear()
@@ -54,15 +57,16 @@ class SignInActivity : AppCompatActivity() {
         })
     }
 
-    private fun startSignUp(){
+    private fun startSignUp() {
         binding.signUpButton.setOnClickListener {
-            val intent = Intent(this,SignUpActivity::class.java)
+            val intent = Intent(this, SignUpActivity::class.java)
             getResult.launch(intent)
         }
 
         getResult = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult()){
-            if(it.resultCode == RESULT_OK) {
+            ActivityResultContracts.StartActivityForResult()
+        ) {
+            if (it.resultCode == RESULT_OK) {
                 binding.inEditId.text.clear()
                 binding.inEditId.text.append(it.data?.getStringExtra("Id"))
                 binding.inEditPw.text.clear()
@@ -70,7 +74,6 @@ class SignInActivity : AppCompatActivity() {
             }
         }
     }
-
 
 
 }
