@@ -1,162 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".SignInActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="66dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/img_github" />
+    <data>
 
-    <TextView
-        android:id="@+id/inIdtext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/noto_sans_kr"
-        android:includeFontPadding="false"
-        android:text="깃허브 아이디"
-        android:textColor="@color/black"
-        android:textFontWeight="700"
-        android:textSize="14sp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
-
-    <EditText
-        android:id="@+id/inEditId"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/text_input_color"
-        android:ems="10"
-        android:fontFamily="@font/noto_sans_kr"
-        android:hint="깃허브 아이디를 입력해주세요."
-        android:includeFontPadding="false"
-        android:inputType="textPersonName"
-        android:lineHeight="20dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="12dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="12dp"
-        android:textColor="@color/text_color"
-        android:textFontWeight="400"
-        android:textSize="12sp"
-        android:textStyle="normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/inIdtext"
-        app:layout_constraintTop_toBottomOf="@+id/inIdtext" />
-
-    <TextView
-        android:id="@+id/inPwText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="34dp"
-        android:fontFamily="@font/noto_sans_kr"
-        android:includeFontPadding="false"
-        android:text="비밀번호"
-        android:textColor="@color/black"
-        android:textFontWeight="700"
-        android:textSize="14sp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="@+id/inEditId"
-        app:layout_constraintTop_toBottomOf="@+id/inEditId" />
-
-    <EditText
-        android:id="@+id/inEditPw"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/text_input_color"
-        android:ems="10"
-        android:fontFamily="@font/noto_sans_kr"
-        android:hint="비밀번호를 입력해주세요."
-        android:includeFontPadding="false"
-        android:inputType="textPassword"
-        android:lineHeight="20dp"
-        android:minHeight="48dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="12dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="12dp"
-        android:textColor="@color/text_color"
-        android:textFontWeight="400"
-        android:textSize="12sp"
-        android:textStyle="normal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/inPwText"
-        app:layout_constraintTop_toBottomOf="@+id/inPwText" />
-
-    <Button
-        android:id="@+id/loginButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="185dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/button_border_pink"
-        android:fontFamily="@font/noto_sans_kr"
-        android:includeFontPadding="false"
-        android:text="로그인"
-        android:textColor="#FFFFFF"
-        android:textFontWeight="700"
-        android:textSize="15dp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inEditPw" />
+        <variable
+            name="signInData"
+            type="changhwan.experiment.sopthomework.SignInActivity" />
+    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/sign_up_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/loginButton">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".SignInActivity">
 
-        <TextView
-            android:id="@+id/sign_in_text"
+        <ImageView
+            android:id="@+id/imageView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="66dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/img_github" />
+
+        <TextView
+            android:id="@+id/inIdtext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
             android:fontFamily="@font/noto_sans_kr"
             android:includeFontPadding="false"
-            android:text="계정이 없으신가요?"
-            android:textColor="#828282"
+            android:text="깃허브 아이디"
+            android:textColor="@color/black"
+            android:textFontWeight="700"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+        <EditText
+            android:id="@+id/inEditId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/text_input_color"
+            android:ems="10"
+            android:fontFamily="@font/noto_sans_kr"
+            android:hint="깃허브 아이디를 입력해주세요."
+            android:includeFontPadding="false"
+            android:inputType="textPersonName"
+            android:lineHeight="20dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="12dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="12dp"
+            android:text="@={signInData.signInEmail}"
+            android:textColor="@color/text_color"
             android:textFontWeight="400"
             android:textSize="12sp"
             android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="@+id/sign_up_layout"
-            app:layout_constraintStart_toStartOf="@+id/sign_up_layout"
-            app:layout_constraintTop_toTopOf="@id/sign_up_layout" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/inIdtext"
+            app:layout_constraintTop_toBottomOf="@+id/inIdtext" />
 
         <TextView
-            android:id="@+id/signUpButton"
+            android:id="@+id/inPwText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginTop="34dp"
             android:fontFamily="@font/noto_sans_kr"
             android:includeFontPadding="false"
-            android:text="회원가입"
-            android:textColor="#828282"
+            android:text="비밀번호"
+            android:textColor="@color/black"
             android:textFontWeight="700"
+            android:textSize="14sp"
+            android:textStyle="normal"
+            app:layout_constraintStart_toStartOf="@+id/inEditId"
+            app:layout_constraintTop_toBottomOf="@+id/inEditId" />
+
+        <EditText
+            android:id="@+id/inEditPw"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/text_input_color"
+            android:ems="10"
+            android:fontFamily="@font/noto_sans_kr"
+            android:hint="비밀번호를 입력해주세요."
+            android:includeFontPadding="false"
+            android:inputType="textPassword"
+            android:lineHeight="20dp"
+            android:minHeight="48dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="12dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="12dp"
+            android:text="@={signInData.signInPassword}"
+            android:textColor="@color/text_color"
+            android:textFontWeight="400"
             android:textSize="12sp"
             android:textStyle="normal"
-            app:layout_constraintBottom_toBottomOf="@+id/sign_up_layout"
-            app:layout_constraintEnd_toEndOf="@+id/sign_up_layout"
-            app:layout_constraintStart_toEndOf="@+id/sign_in_text"
-            app:layout_constraintTop_toTopOf="@id/sign_up_layout" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/inPwText"
+            app:layout_constraintTop_toBottomOf="@+id/inPwText" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="185dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/button_border_pink"
+            android:fontFamily="@font/noto_sans_kr"
+            android:includeFontPadding="false"
+            android:text="로그인"
+            android:textColor="#FFFFFF"
+            android:textFontWeight="700"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inEditPw" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/sign_up_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loginButton">
+
+            <TextView
+                android:id="@+id/sign_in_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/noto_sans_kr"
+                android:includeFontPadding="false"
+                android:text="계정이 없으신가요?"
+                android:textColor="#828282"
+                android:textFontWeight="400"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="@+id/sign_up_layout"
+                app:layout_constraintStart_toStartOf="@+id/sign_up_layout"
+                app:layout_constraintTop_toTopOf="@id/sign_up_layout" />
+
+            <TextView
+                android:id="@+id/signUpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:fontFamily="@font/noto_sans_kr"
+                android:includeFontPadding="false"
+                android:text="회원가입"
+                android:textColor="#828282"
+                android:textFontWeight="700"
+                android:textSize="12sp"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="@+id/sign_up_layout"
+                app:layout_constraintEnd_toEndOf="@+id/sign_up_layout"
+                app:layout_constraintStart_toEndOf="@+id/sign_in_text"
+                app:layout_constraintTop_toTopOf="@id/sign_up_layout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
