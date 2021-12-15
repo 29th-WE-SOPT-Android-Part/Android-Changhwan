@@ -6,13 +6,13 @@
     <data>
         <variable
             name="camera"
-            type="changhwan.experiment.sopthomework.CameraData" />
+            type="changhwan.experiment.sopthomework.ui.view.camera.data.CameraData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".CameraFragment">
+        tools:context=".ui.view.camera.CameraFragment">
 
         <ImageView
             android:id="@+id/camera_img"

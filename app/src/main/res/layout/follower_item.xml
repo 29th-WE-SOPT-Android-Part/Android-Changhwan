@@ -7,7 +7,7 @@
 
         <variable
             name="profileRecycler"
-            type="changhwan.experiment.sopthomework.FollowerData" />
+            type="changhwan.experiment.sopthomework.ui.view.profile.follower.data.FollowerData" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

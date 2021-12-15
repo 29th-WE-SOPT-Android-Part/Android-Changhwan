@@ -7,13 +7,13 @@
 
         <variable
             name="signInData"
-            type="changhwan.experiment.sopthomework.SignInActivity" />
+            type="changhwan.experiment.sopthomework.ui.view.signin.SignInActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".SignInActivity">
+        tools:context=".ui.view.signin.SignInActivity">
 
         <ImageView
             android:id="@+id/imageView2"

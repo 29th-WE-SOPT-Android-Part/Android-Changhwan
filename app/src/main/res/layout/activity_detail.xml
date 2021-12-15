@@ -7,13 +7,13 @@
 
         <variable
             name="detail"
-            type="changhwan.experiment.sopthomework.DetailActivity" />
+            type="changhwan.experiment.sopthomework.ui.view.detail.DetailActivity" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".DetailActivity">
+        tools:context=".ui.view.detail.DetailActivity">
 
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/detailFragmentFrame"

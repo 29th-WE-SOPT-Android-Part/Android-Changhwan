@@ -1,6 +1,10 @@
 package changhwan.experiment.sopthomework
 
 import android.app.Application
+import changhwan.experiment.sopthomework.data.remote.api.SignInService
+import changhwan.experiment.sopthomework.data.remote.api.SignUpService
+import changhwan.experiment.sopthomework.di.HeaderInterceptor
+import changhwan.experiment.sopthomework.ui.viewmodel.SignViewModel
 import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -9,7 +13,6 @@ import org.koin.dsl.module
 import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.create
 
 class MainApplication : Application() {
 
