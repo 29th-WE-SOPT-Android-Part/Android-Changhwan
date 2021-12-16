@@ -20,6 +20,7 @@
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_detail.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_home.xml" value="0.33" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_main.xml" value="0.3515625" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_on_boarding.xml" value="0.2900763358778626" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_sign_in.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/activity_sign_up.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/follower_item.xml" value="0.3134057971014493" />
@@ -29,6 +30,9 @@
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_home.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_home_follower.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_home_following.xml" value="0.3515625" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_on_boarding_first.xml" value="0.3645833333333333" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_on_boarding_second.xml" value="0.3645833333333333" />
+        <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_on_boarding_third.xml" value="0.3645833333333333" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_profile.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_profile_detail.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/chang/AndroidStudioProjects/Android-Changhwan/app/src/main/res/layout/fragment_repository.xml" value="0.3292572463768116" />
