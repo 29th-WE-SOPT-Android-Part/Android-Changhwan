@@ -10,12 +10,13 @@ import androidx.lifecycle.MutableLiveData
 import changhwan.experiment.sopthomework.ui.view.profile.data.Introduce
 import changhwan.experiment.sopthomework.R
 import changhwan.experiment.sopthomework.databinding.FragmentProfileDetailBinding
+import changhwan.experiment.sopthomework.ui.view.profile.autologin.SettingFragment
 import com.bumptech.glide.Glide
 
 
 class ProfileDetailFragment : Fragment() {
 
-    private var _binding : FragmentProfileDetailBinding? = null
+    private var _binding: FragmentProfileDetailBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -23,8 +24,10 @@ class ProfileDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = DataBindingUtil.inflate(inflater,
-            R.layout.fragment_profile_detail,container,false)
+        _binding = DataBindingUtil.inflate(
+            inflater,
+            R.layout.fragment_profile_detail, container, false
+        )
 
         val introduce = Introduce(
             liveName = MutableLiveData<String>().apply { value = "Dabin Moon" },
@@ -37,12 +40,21 @@ class ProfileDetailFragment : Fragment() {
         binding.lifecycleOwner = this
 
         initImg()
+        settingAutoLogin()
 
         return binding.root
     }
 
 
-    private fun initImg(){
+    private fun settingAutoLogin() {
+        binding.setUpIcon.setOnClickListener {
+            val settingFragment = SettingFragment()
+            requireParentFragment().childFragmentManager.beginTransaction()
+                .replace(R.id.fragmentFrame, settingFragment).commit()
+        }
+    }
+
+    private fun initImg() {
         Glide.with(this)
             .load(R.drawable.minion)
             .circleCrop()
