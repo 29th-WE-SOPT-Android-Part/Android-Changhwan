@@ -15,9 +15,14 @@ import androidx.lifecycle.Observer
 import changhwan.experiment.sopthomework.MainApplication
 import changhwan.experiment.sopthomework.ui.view.home.HomeActivity
 import changhwan.experiment.sopthomework.R
+import changhwan.experiment.sopthomework.data.local.SoptDatabase
+import changhwan.experiment.sopthomework.data.local.SoptEntity
 import changhwan.experiment.sopthomework.databinding.ActivitySignInBinding
 import changhwan.experiment.sopthomework.ui.view.signup.SignUpActivity
 import changhwan.experiment.sopthomework.ui.viewmodel.SignViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 
 class SignInActivity : AppCompatActivity() {
@@ -50,6 +55,10 @@ class SignInActivity : AppCompatActivity() {
             signInViewModel.startSignIn()
             if(binding.cbAutoLogin.isChecked){
                 MainApplication.prefs.setBoolean("auto_login",true)
+//                val db = SoptDatabase.getInstance(applicationContext)
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    db!!.soptDao().insert(SoptEntity(autoLogin = true))
+//                }
             }
         }
     }
