@@ -3,12 +3,16 @@ package changhwan.experiment.sopthomework.ui.view.signin
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.os.HandlerCompat.postDelayed
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import changhwan.experiment.sopthomework.MainApplication
 import changhwan.experiment.sopthomework.ui.view.home.HomeActivity
 import changhwan.experiment.sopthomework.R
 import changhwan.experiment.sopthomework.databinding.ActivitySignInBinding
@@ -33,14 +37,20 @@ class SignInActivity : AppCompatActivity() {
         startLogin()
         startSignUp()
         observeSuccess()
+        autoLogin()
+
     }
 
     private fun startLogin() {
         binding.loginButton.setOnClickListener {
+            signInViewModel.getEmail("")
+            signInViewModel.getPassword("")
             signInEmail.value?.let { signInViewModel.getEmail(it) }
             signInPassword.value?.let { signInViewModel.getPassword(it) }
             signInViewModel.startSignIn()
-
+            if(binding.cbAutoLogin.isChecked){
+                MainApplication.prefs.setBoolean("auto_login",true)
+            }
         }
     }
 
@@ -77,5 +87,15 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-
+    private fun autoLogin(){
+        if(MainApplication.prefs.getBoolean("auto_login",false)){
+            signInViewModel.getEmail("kimwy1997@gmail.com")
+            signInViewModel.getPassword("123456")
+            signInViewModel.startSignIn()
+            Toast.makeText(this,"자동로그인 완료",Toast.LENGTH_SHORT).show()
+            Handler().postDelayed({
+                finish()
+            },2000L)
+        }
+    }
 }
