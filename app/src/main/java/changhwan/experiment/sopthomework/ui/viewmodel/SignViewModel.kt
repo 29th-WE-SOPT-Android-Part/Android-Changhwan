@@ -34,15 +34,15 @@ class SignViewModel(private val signInService : SignInService, private val signU
 
 
     fun getEmail(email: String) {
-        _viewEmail.value = email
+        _viewEmail.postValue(email)
     }
 
     fun getName(name: String) {
-        _viewName.value = name
+        _viewName.postValue(name)
     }
 
     fun getPassword(password: String) {
-        _viewPassword.value = password
+        _viewPassword.postValue(password)
     }
 
     fun startSignUp() {

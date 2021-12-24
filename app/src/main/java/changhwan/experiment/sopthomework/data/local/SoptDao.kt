@@ -1,9 +1,6 @@
 package changhwan.experiment.sopthomework.data.local
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface SoptDao {
@@ -12,4 +9,7 @@ interface SoptDao {
 
     @Update
     fun update(soptEntity: SoptEntity)
+
+    @Query("SELECT * FROM sopt_table")
+    fun getAll(): List<SoptEntity>
 }

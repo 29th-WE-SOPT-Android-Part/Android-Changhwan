@@ -216,6 +216,23 @@ finish()로 a로 넘어가면된다.
 
 - app:layout_constraintDimensionRatio="1.0" (width와 height의 비율을 float값으로 표현하는 방법)
 
+
+3-2
+
+코틀린 특성상 마지막 인자가 람다식이라면 괄호 밖으로 빼서 작성할수있기 때문이다.
+
+SAM 변환
+
+코틀린에서는 추상 메소드 하나를 인수로 사용할 때는 함수를 인수로 전달하면 편합니다.
+
+자바로 작성된 메소드가 하나인 인터페이스를 구현할 때는 대신 함수를 작성할 수 있습니다.
+
+이를 SAM(Single Abstract Method) 변환 이라 합니다.
+
+그리고 람다가 어떤 메소드의 유일한 인수인 경우에는 메소드의 괄호를 생략할 수 있습니다
+
+출처: https://beomseok95.tistory.com/92
+
 </details>
 
 <details markdown="1">
@@ -4602,7 +4619,43 @@ class SettingFragment : Fragment() {
 
 Mascota 참고
 
+1-3 전략 추가
 
+![image-20211224144301994](C:\Users\chang\AppData\Roaming\Typora\typora-user-images\image-20211224144301994.png)
+
+우선 가장 상위에 data,di,ui,utill로 나누고
+
+
+
+data에는
+
+local과 remote로 나눠서
+
+local은 그야말로 로컬 room같은거
+
+remote에는 retrofit같은거 몰아넣었다
+
+
+
+di에는 의존성 주입에 사용되는
+
+인터셉터라든지 모듈도 분리해서 넣어야하는데 모듈은 복잡해서 분리를 못했다 ㅠ
+
+
+
+ui
+
+ui하위에는 view,viewmodel이있는데 네이밍과같이 적절한것 넣어주고
+
+view에는
+
+기능 별로 나눴으며 어댑터 같은것도 들어간다
+
+
+
+마직막으로utill에는
+
+diffutill같은 전역에서 쓰이는utill들을 몰아놨다
 
 2-1
 

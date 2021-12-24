@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -20,10 +21,9 @@ import changhwan.experiment.sopthomework.data.local.SoptEntity
 import changhwan.experiment.sopthomework.databinding.ActivitySignInBinding
 import changhwan.experiment.sopthomework.ui.view.signup.SignUpActivity
 import changhwan.experiment.sopthomework.ui.viewmodel.SignViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.koin.android.ext.android.inject
+import org.koin.ext.getScopeName
 
 class SignInActivity : AppCompatActivity() {
 
@@ -32,6 +32,8 @@ class SignInActivity : AppCompatActivity() {
     private val signInViewModel: SignViewModel by inject()
     val signInEmail = MutableLiveData<String>()
     val signInPassword = MutableLiveData<String>()
+    private var data: List<SoptEntity>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +46,7 @@ class SignInActivity : AppCompatActivity() {
         observeSuccess()
         autoLogin()
 
+
     }
 
     private fun startLogin() {
@@ -53,12 +56,11 @@ class SignInActivity : AppCompatActivity() {
             signInEmail.value?.let { signInViewModel.getEmail(it) }
             signInPassword.value?.let { signInViewModel.getPassword(it) }
             signInViewModel.startSignIn()
-            if(binding.cbAutoLogin.isChecked){
-                MainApplication.prefs.setBoolean("auto_login",true)
-//                val db = SoptDatabase.getInstance(applicationContext)
-//                CoroutineScope(Dispatchers.IO).launch {
-//                    db!!.soptDao().insert(SoptEntity(autoLogin = true))
-//                }
+            val db = SoptDatabase.getInstance(applicationContext)
+            if (binding.cbAutoLogin.isChecked) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    db!!.soptDao().insert(SoptEntity(autoLogin = true))
+                }
             }
         }
     }
@@ -96,15 +98,23 @@ class SignInActivity : AppCompatActivity() {
         }
     }
 
-    private fun autoLogin(){
-        if(MainApplication.prefs.getBoolean("auto_login",false)){
-            signInViewModel.getEmail("kimwy1997@gmail.com")
-            signInViewModel.getPassword("123456")
-            signInViewModel.startSignIn()
-            Toast.makeText(this,"자동로그인 완료",Toast.LENGTH_SHORT).show()
-            Handler().postDelayed({
-                finish()
-            },2000L)
+    private fun autoLogin() {
+        val db = SoptDatabase.getInstance(applicationContext)
+        CoroutineScope(Dispatchers.IO).launch {
+            data = db!!.soptDao().getAll()
+            data?.let {
+                withContext(Dispatchers.Main){
+                    if (data!![0].autoLogin) {
+                        signInViewModel.getEmail("kimwy1997@gmail.com")
+                        signInViewModel.getPassword("123456")
+                        signInViewModel.startSignIn()
+                        Toast.makeText(this@SignInActivity, "자동로그인 완료", Toast.LENGTH_SHORT).show()
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            finish()
+                        }, 2000L)
+                    }
+                }
+            }
         }
     }
 }

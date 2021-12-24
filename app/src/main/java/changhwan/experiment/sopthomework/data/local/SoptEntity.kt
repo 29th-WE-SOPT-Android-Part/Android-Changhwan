@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "sopt_table")
 data class SoptEntity(
     @PrimaryKey(autoGenerate = true)
-    val autoLogin :Boolean
+    val id: Int?= null,
+    val autoLogin: Boolean
 )

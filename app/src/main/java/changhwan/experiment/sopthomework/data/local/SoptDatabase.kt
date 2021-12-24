@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [SoptEntity::class],version = 1)
+@Database(entities = [SoptEntity::class],version = 2)
 abstract class SoptDatabase : RoomDatabase() {
     abstract fun soptDao(): SoptDao
 
@@ -18,7 +18,8 @@ abstract class SoptDatabase : RoomDatabase() {
                 synchronized(SoptDatabase::class){
                     instance = Room.databaseBuilder(
                         context.applicationContext, SoptDatabase::class.java,"sopt-database")
-                        .allowMainThreadQueries()
+//                        .allowMainThreadQueries()
+                        .fallbackToDestructiveMigration()
                         .build()
                 }
             }
