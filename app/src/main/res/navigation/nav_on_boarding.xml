@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_on_boarding"
+    app:startDestination="@id/onBoardingFirstFragment">
+
+    <fragment
+        android:id="@+id/onBoardingFirstFragment"
+        android:name="changhwan.experiment.sopthomework.ui.view.onboarding.fragment.OnBoardingFirstFragment"
+        android:label="첫번쨰"
+        tools:layout="@layout/fragment_on_boarding_first" >
+        <action
+            android:id="@+id/action_onBoardingFirstFragment_to_onBoardingSecondFragment"
+            app:destination="@id/onBoardingSecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onBoardingSecondFragment"
+        android:name="changhwan.experiment.sopthomework.ui.view.onboarding.fragment.OnBoardingSecondFragment"
+        android:label="두번쨰"
+        tools:layout="@layout/fragment_on_boarding_second" >
+        <action
+            android:id="@+id/action_onBoardingSecondFragment_to_onBoardingThirdFragment"
+            app:destination="@id/onBoardingThirdFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onBoardingThirdFragment"
+        android:name="changhwan.experiment.sopthomework.ui.view.onboarding.fragment.OnBoardingThirdFragment"
+        android:label="세번째"
+        tools:layout="@layout/fragment_on_boarding_third" >
+        <action
+            android:id="@+id/action_pop_onBoardingThirdFragment_to_onBoardingFirstFragment"
+            app:destination="@id/onBoardingFirstFragment"
+            app:popUpTo="@id/onBoardingFirstFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+</navigation>

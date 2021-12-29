@@ -216,6 +216,23 @@ finish()로 a로 넘어가면된다.
 
 - app:layout_constraintDimensionRatio="1.0" (width와 height의 비율을 float값으로 표현하는 방법)
 
+
+3-2
+
+코틀린 특성상 마지막 인자가 람다식이라면 괄호 밖으로 빼서 작성할수있기 때문이다.
+
+SAM 변환
+
+코틀린에서는 추상 메소드 하나를 인수로 사용할 때는 함수를 인수로 전달하면 편합니다.
+
+자바로 작성된 메소드가 하나인 인터페이스를 구현할 때는 대신 함수를 작성할 수 있습니다.
+
+이를 SAM(Single Abstract Method) 변환 이라 합니다.
+
+그리고 람다가 어떤 메소드의 유일한 인수인 경우에는 메소드의 괄호를 생략할 수 있습니다
+
+출처: https://beomseok95.tistory.com/92
+
 </details>
 
 <details markdown="1">
@@ -4246,6 +4263,466 @@ https://enant.tistory.com/23   <-근데 이부분은 쓸모가없었다 사실 �
 
 
 https://developer88.tistory.com/214
+
+
+</details>
+
+<details markdown="1">
+<summary>7주차</summary>
+# 실행화면
+
+https://user-images.githubusercontent.com/54737136/146530187-a15f8994-839d-4c33-b023-e4646c06db62.mp4
+
+
+
+# 코드설명
+
+level1,2 했고 3은 하다못함
+
+
+
+level1-1
+
+OnboardingActivity.kt
+
+```
+package changhwan.experiment.sopthomework.ui.view.onboarding
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
+import changhwan.experiment.sopthomework.R
+import changhwan.experiment.sopthomework.databinding.ActivityOnBoardingBinding
+import org.koin.android.ext.android.bind
+
+class OnBoardingActivity : AppCompatActivity() {
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val binding = ActivityOnBoardingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container_on_boarding) as NavHostFragment
+        val navController = navHostFragment.navController
+        val appBarConfiguration = AppBarConfiguration(
+            topLevelDestinationIds = setOf(),
+            fallbackOnNavigateUpListener = ::onSupportNavigateUp
+        )
+        findViewById<Toolbar>(R.id.tb_on_boarding)
+            .setupWithNavController(navController, appBarConfiguration)
+    }
+
+
+}
+```
+
+OnboardingFirstFragment.kt
+
+```
+package changhwan.experiment.sopthomework.ui.view.onboarding.fragment
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.navigation.fragment.findNavController
+import changhwan.experiment.sopthomework.R
+import changhwan.experiment.sopthomework.databinding.FragmentOnBoardingFirstBinding
+import org.koin.android.ext.android.bind
+
+
+class OnBoardingFirstFragment : Fragment() {
+
+    private var _binding: FragmentOnBoardingFirstBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentOnBoardingFirstBinding.inflate(inflater, container, false)
+
+
+        binding.btnOnBoardFirst.setOnClickListener{
+            findNavController().navigate(R.id.action_onBoardingFirstFragment_to_onBoardingSecondFragment)
+        }
+
+        return binding.root
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+```
+
+프래그먼트는 예시로 하나만 올리겠습니다.
+
+```
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_on_boarding"
+    app:startDestination="@id/onBoardingFirstFragment">
+
+    <fragment
+        android:id="@+id/onBoardingFirstFragment"
+        android:name="changhwan.experiment.sopthomework.ui.view.onboarding.fragment.OnBoardingFirstFragment"
+        android:label="첫번쨰"
+        tools:layout="@layout/fragment_on_boarding_first" >
+        <action
+            android:id="@+id/action_onBoardingFirstFragment_to_onBoardingSecondFragment"
+            app:destination="@id/onBoardingSecondFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onBoardingSecondFragment"
+        android:name="changhwan.experiment.sopthomework.ui.view.onboarding.fragment.OnBoardingSecondFragment"
+        android:label="두번쨰"
+        tools:layout="@layout/fragment_on_boarding_second" >
+        <action
+            android:id="@+id/action_onBoardingSecondFragment_to_onBoardingThirdFragment"
+            app:destination="@id/onBoardingThirdFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/onBoardingThirdFragment"
+        android:name="changhwan.experiment.sopthomework.ui.view.onboarding.fragment.OnBoardingThirdFragment"
+        android:label="세번째"
+        tools:layout="@layout/fragment_on_boarding_third" >
+        <action
+            android:id="@+id/action_pop_onBoardingThirdFragment_to_onBoardingFirstFragment"
+            app:destination="@id/onBoardingFirstFragment"
+            app:popUpTo="@id/onBoardingFirstFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+</navigation>
+```
+
+네비게이션에 보면 level 2에 백스택 가는것까지 넣어놨습니다.
+
+
+
+level1-2
+
+MainActivity.kt
+
+```
+package changhwan.experiment.sopthomework
+
+import android.app.Application
+import changhwan.experiment.sopthomework.data.remote.api.SignInService
+import changhwan.experiment.sopthomework.data.remote.api.SignUpService
+import changhwan.experiment.sopthomework.di.HeaderInterceptor
+import changhwan.experiment.sopthomework.ui.viewmodel.SignViewModel
+import changhwan.experiment.sopthomework.util.PreferenceUtil
+import okhttp3.OkHttpClient
+import org.koin.android.ext.koin.androidContext
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.context.startKoin
+import org.koin.dsl.module
+import retrofit2.Converter
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+class MainApplication : Application() {
+
+    companion object{
+        lateinit var  prefs: PreferenceUtil
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+
+        //shared preferences
+        prefs = PreferenceUtil(applicationContext)
+
+        startKoin {
+            androidContext(this@MainApplication)
+            modules(soptNetworkModule,viewModelModule)
+        }
+    }
+}
+
+val soptNetworkModule = module {
+    single {
+        OkHttpClient.Builder()
+            .addInterceptor(HeaderInterceptor())
+            .build()
+    }
+    single {
+        GsonConverterFactory.create() as Converter.Factory
+    }
+
+    single<Retrofit> {
+        Retrofit.Builder()
+            .client(get())
+            .addConverterFactory(get())
+            .baseUrl("https://asia-northeast3-we-sopt-29.cloudfunctions.net/api/")
+            .build()
+    }
+
+    single<SignUpService> {
+        get<Retrofit>().create(SignUpService::class.java)
+    }
+
+    single<SignInService> {
+        get<Retrofit>().create(SignInService::class.java)
+    }
+}
+
+val viewModelModule = module {
+    viewModel {
+        SignViewModel(get(),get())
+    }
+}
+```
+
+여기에 shared preference 정리했습니다.
+
+PreferenceUtill.kt
+
+```
+package changhwan.experiment.sopthomework.util
+
+import android.content.Context
+import android.content.SharedPreferences
+
+class PreferenceUtil(context: Context) {
+
+    private val prefs: SharedPreferences =
+        context.getSharedPreferences("main_prefs",Context.MODE_PRIVATE)
+
+
+    fun getBoolean (key:String,defvalue:Boolean): Boolean{
+        return prefs.getBoolean(key,defvalue)
+    }
+
+    fun setBoolean (key:String, value:Boolean){
+        return prefs.edit().putBoolean(key,value).apply()
+    }
+}
+```
+
+
+
+사용한예시
+
+SigninActivity에서  sharedpreference를 통해 자동로그인 여부 저장
+
+```
+private fun startLogin() {
+        binding.loginButton.setOnClickListener {
+            signInViewModel.getEmail("")
+            signInViewModel.getPassword("")
+            signInEmail.value?.let { signInViewModel.getEmail(it) }
+            signInPassword.value?.let { signInViewModel.getPassword(it) }
+            signInViewModel.startSignIn()
+            if(binding.cbAutoLogin.isChecked){
+                MainApplication.prefs.setBoolean("auto_login",true)
+//                val db = SoptDatabase.getInstance(applicationContext)
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    db!!.soptDao().insert(SoptEntity(autoLogin = true))
+//                }
+            }
+        }
+    }
+```
+
+
+
+
+
+SettingFragment.kt를 만들어 환경설정 창을 만들었습니다.
+
+```
+package changhwan.experiment.sopthomework.ui.view.profile.autologin
+
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import changhwan.experiment.sopthomework.MainApplication
+import changhwan.experiment.sopthomework.R
+import changhwan.experiment.sopthomework.databinding.FragmentSettingBinding
+import changhwan.experiment.sopthomework.ui.view.profile.follower.FollowerFragment
+
+
+class SettingFragment : Fragment() {
+
+    private var _binding: FragmentSettingBinding? = null
+    private val binding get() = _binding!!
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentSettingBinding.inflate(layoutInflater,container,false)
+
+        updataAutoLoginState()
+        backSetting()
+        actionAutoLoginStateChange()
+        return binding.root
+    }
+
+    private fun updataAutoLoginState(){
+        binding.cbAutoLoginState.isChecked = MainApplication.prefs.getBoolean("auto_login",false)
+    }
+
+    private fun actionAutoLoginStateChange(){
+        binding.cbAutoLoginState.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                MainApplication.prefs.setBoolean("auto_login",true)
+            }else{
+                MainApplication.prefs.setBoolean("auto_login",false)
+            }
+        }
+    }
+
+    private fun backSetting(){
+        binding.btnBack.setOnClickListener{
+            binding.btnBack.setOnClickListener {
+                val followerFragment = FollowerFragment()
+                requireParentFragment().childFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentFrame,followerFragment ).commit()
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+```
+
+
+
+
+
+과제 1-3
+
+Mascota 참고
+
+1-3 전략 추가
+
+![image-20211224144301994](C:\Users\chang\AppData\Roaming\Typora\typora-user-images\image-20211224144301994.png)
+
+우선 가장 상위에 data,di,ui,utill로 나누고
+
+
+
+data에는
+
+local과 remote로 나눠서
+
+local은 그야말로 로컬 room같은거
+
+remote에는 retrofit같은거 몰아넣었다
+
+
+
+di에는 의존성 주입에 사용되는
+
+인터셉터라든지 모듈도 분리해서 넣어야하는데 모듈은 복잡해서 분리를 못했다 ㅠ
+
+
+
+ui
+
+ui하위에는 view,viewmodel이있는데 네이밍과같이 적절한것 넣어주고
+
+view에는
+
+기능 별로 나눴으며 어댑터 같은것도 들어간다
+
+
+
+마직막으로utill에는
+
+diffutill같은 전역에서 쓰이는utill들을 몰아놨다
+
+2-1
+
+위쪽에서 네비게이션은 적혀있고
+
+OnBoardingThiedFragmnet.kt에서
+
+```
+private fun setBackButton(){
+    requireActivity().onBackPressedDispatcher.addCallback(this){
+        findNavController().navigate(R.id.action_pop_onBoardingThirdFragment_to_onBoardingFirstFragment)
+    }
+}
+```
+
+back버튼 눌렸을때 실행되는부분 만들어놓은것
+
+
+
+2-2
+
+OnBoardingActivity.kt
+
+```
+package changhwan.experiment.sopthomework.ui.view.onboarding
+
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
+import changhwan.experiment.sopthomework.R
+import changhwan.experiment.sopthomework.databinding.ActivityOnBoardingBinding
+import org.koin.android.ext.android.bind
+
+class OnBoardingActivity : AppCompatActivity() {
+
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val binding = ActivityOnBoardingBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.container_on_boarding) as NavHostFragment
+        val navController = navHostFragment.navController
+        val appBarConfiguration = AppBarConfiguration(
+            topLevelDestinationIds = setOf(),
+            fallbackOnNavigateUpListener = ::onSupportNavigateUp
+        )
+        findViewById<Toolbar>(R.id.tb_on_boarding)
+            .setupWithNavController(navController, appBarConfiguration)
+    }
+
+
+}
+```
+
+여기에 toolbar와 연결하는 코드 작성되어있습니다
+
+
 
 
 </details>

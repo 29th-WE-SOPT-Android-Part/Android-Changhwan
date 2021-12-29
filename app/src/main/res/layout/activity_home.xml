@@ -7,14 +7,14 @@
 
         <variable
             name="introduce"
-            type="changhwan.experiment.sopthomework.Introduce" />
+            type="changhwan.experiment.sopthomework.ui.view.profile.data.Introduce" />
 
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".HomeActivity">
+        tools:context=".ui.view.home.HomeActivity">
 
 
         <androidx.viewpager2.widget.ViewPager2

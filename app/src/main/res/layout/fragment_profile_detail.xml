@@ -7,14 +7,14 @@
 
         <variable
             name="profileDetail"
-            type="changhwan.experiment.sopthomework.Introduce" />
+            type="changhwan.experiment.sopthomework.ui.view.profile.data.Introduce" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#FA79B0"
-        tools:context=".ProfileDetailFragment">
+        tools:context=".ui.view.profile.detail.ProfileDetailFragment">
 
         <ImageView
             android:id="@+id/profile_detail_img"
